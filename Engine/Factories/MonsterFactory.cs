@@ -9,7 +9,7 @@ namespace Engine.Factories
 {
     static public class MonsterFactory
     {
-        static Monster GetMonster(int id)
+        public static Monster GetMonster(int id)
         {
             switch(id)
             {
@@ -21,7 +21,7 @@ namespace Engine.Factories
                     return snake;
 
                 case 2:
-                    Monster rat = new Monster("Rat","Rat.png",5,5,5, 1);
+                    Monster rat = new Monster("Rat", "Rat.png", 5, 5, 5, 1);
                     AddLootItem(rat, 9003, 25);
                     AddLootItem(rat, 9004, 75);
 
@@ -36,7 +36,7 @@ namespace Engine.Factories
 
 
                 default:
-                    throw new ArgumentException(string.Format("MonsterType {0} does not exist", id));
+                    throw new ArgumentException(string.Format($"MonsterType {0} does not exist", id));
 
             }
         }

@@ -6,11 +6,14 @@ using System.Threading.Tasks;
 using Engine.Models;
 using Engine.Factories;
 using System.ComponentModel;
+using Engine.EventArgs;
 
 namespace Engine.ViewModels
 {
     public class GameSession : BaseNotification
     {
+        public event EventHandler<GameMessageEventArgs> OnMessageRised;
+        private Monster _currentMonster;
         private Location _currentLocation;
         public World CurrentWorld { get; set; }
         public Player CurrentPlayer { get; set; }
@@ -26,8 +29,25 @@ namespace Engine.ViewModels
                 OnPropertyChanged(nameof(HasLocationToNorth));
 
                 GivePlayerQuestAtLocation();
+                GetMonsterAtLocation();
             } 
         }   
+        public Monster CurrentMonster
+        {
+            get => _currentMonster;
+            set
+            {
+                _currentMonster = value;
+                OnPropertyChanged(nameof(CurrentMonster));
+                OnPropertyChanged(nameof(HasMonster));
+
+                if (_currentMonster != null)
+                {
+                    RaisedMessage("");
+                    RaisedMessage($"You see {CurrentMonster.Name} here!");
+                }
+            }
+        }
         public GameSession()
         {
             CurrentPlayer = new Player { Name = "Nikita", CharacterClass = "This method is not inp", ExperiencePoints = 0, Gold = 100, HitPoints = 10, Level = 0};
@@ -71,7 +91,7 @@ namespace Engine.ViewModels
         {
             CurrentLocation = CurrentWorld.LocationAt(CurrentLocation.XCoordinate + 1, CurrentLocation.YCoordinate);
         }
-
+        public bool HasMonster => CurrentMonster != null;
         private void GivePlayerQuestAtLocation()
         {
             foreach(Quest quest in CurrentLocation.QuestsAvailableHere)
@@ -81,6 +101,14 @@ namespace Engine.ViewModels
                     CurrentPlayer.Quests.Add(new QuestStatus(quest));
                 }
             }
+        }
+        public void GetMonsterAtLocation()
+        {
+            CurrentMonster = CurrentLocation.GetMonster();
+        }
+        private void RaisedMessage(string message)
+        {
+            OnMessageRised?.Invoke(this, new GameMessageEventArgs(message));
         }
     }
 }

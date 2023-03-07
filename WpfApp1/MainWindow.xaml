@@ -3,6 +3,8 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:viewModels="clr-namespace:Engine.ViewModels;assembly=Engine"
+        d:DataContext="{d:DesignInstance viewModels:GameSession}"
         xmlns:local="clr-namespace:WPFUI"
         mc:Ignorable="d"
         FontSize="11pt"
@@ -24,11 +26,10 @@
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
-        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="Menu" Background="Aquamarine"/>
-        <Label Grid.Row="1" Grid.Column="0" Content="Player Data" Background="AliceBlue"/>
         
-       
+        <!--Menu-->
+        <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="Menu" Background="Aquamarine"/>
+        <!--Player Stats-->
         <Grid Grid.Row="1" Grid.Column="0" Background="AliceBlue">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -57,18 +58,29 @@
             <Label Grid.Row="5" Grid.Column="0" Content="Level:"/>
             <Label Grid.Row="5" Grid.Column="1" Content="{Binding CurrentPlayer.Level}"/>
         </Grid>
-
+        <!--Gameplay-->
         <Grid Grid.Row="1" Grid.Column="1" Background="Olive">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
-
+            <!--Game messages-->
+            <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderBrush="Gainsboro" BorderThickness="1">
+                
+                <RichTextBox x:Name="GameMessages" Background="Beige" VerticalScrollBarVisibility="Auto">
+                    <RichTextBox.Resources>
+                        <Style TargetType="{x:Type Paragraph}">
+                            <Setter Property="Margin" Value="0"/>
+                        </Style>
+                    </RichTextBox.Resources>
+                </RichTextBox>
+                
+            </Border>
+            <!--Location info-->
             <Border Grid.Row="0" Grid.Column="1" BorderBrush="Black" BorderThickness="2">
                 <Grid Margin="3">
                     <Grid.RowDefinitions>
@@ -79,11 +91,27 @@
 
                     <TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="{Binding CurrentLocation.Name}"/>
                     <Image Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding CurrentLocation.ImageName}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
-                    <TextBlock Grid.Row="2" HorizontalAlignment="Center" Text="{Binding CurrentLocation.Description}"/>
+                    <TextBlock Grid.Row="2" HorizontalAlignment="Center" Text="{Binding CurrentLocation.Description}" TextWrapping="Wrap"/>
+                </Grid>
+            </Border>
+            <!--Monster info-->
+            <Border Grid.Row="1" Grid.Column="1" BorderBrush="Gainsboro" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="{Binding CurrentMonster.Name}"/>
+                    <Image Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding CurrentMonster.ImageName}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                    <StackPanel Grid.Row="2" Visibility="{Binding HasMonster, Converter={StaticResource BooleanToVisibility}}" Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock>Current Hit Points: </TextBlock>
+                        <TextBlock Text="{Binding CurrentMonster.HitPoints}" VerticalAlignment="Center"/>
+                    </StackPanel>
                 </Grid>
             </Border>
         </Grid>
-
+        <!--Inventory/Quests-->
         <Grid Grid.Row="2" Grid.Column="0" Background="Aqua">
             <TabControl>
                 <TabItem Header="Inventory">
@@ -115,7 +143,7 @@
                 </TabItem>
             </TabControl>
         </Grid>
-        
+        <!--Movement-->
         <Grid Grid.Row="2" Grid.Column="1" Background="Bisque">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
