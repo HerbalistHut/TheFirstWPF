@@ -71,7 +71,10 @@
             <!--Game messages-->
             <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderBrush="Gainsboro" BorderThickness="1">
                 
-                <RichTextBox x:Name="GameMessages" Background="Beige" VerticalScrollBarVisibility="Auto">
+                <RichTextBox x:Name="GameMessages" 
+                             Background="Beige" 
+                             VerticalScrollBarVisibility="Auto">  <!--x:Name = "..." - когда код будет получать эвент,
+                                                                    он будет форматировать его и вставлять в RichTextBox используя это имя-->
                     <RichTextBox.Resources>
                         <Style TargetType="{x:Type Paragraph}">
                             <Setter Property="Margin" Value="0"/>

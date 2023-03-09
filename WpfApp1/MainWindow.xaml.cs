@@ -30,6 +30,7 @@ namespace WPFUI
 
             _gameSession = new GameSession();
             DataContext = _gameSession;
+            _gameSession.OnMessageRised += OnGameMessageRaised;
         }
 
         private void OnClick_MoveNorth(object sender, RoutedEventArgs e)
@@ -50,6 +51,14 @@ namespace WPFUI
         private void OnClick_MoveSouth(object sender, RoutedEventArgs e) 
         {
             _gameSession.MoveSouth();
+        }
+
+        // Таким образом мы общаемся между ViewModel и View
+        // Есть более простые пути для реализации вывода сообщений в RichTextBox, но такой подход позволяет разделять View от ViewModel
+        private void OnGameMessageRaised(object sender, GameMessageEventArgs e)
+        {
+            GameMessages.Document.Blocks.Add(new Paragraph(new Run(e.Message)));
+            GameMessages.ScrollToEnd();
         }
         
     }
