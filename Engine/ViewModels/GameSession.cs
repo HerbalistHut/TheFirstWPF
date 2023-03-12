@@ -12,7 +12,7 @@ namespace Engine.ViewModels
 {
     public class GameSession : BaseNotification
     {
-        public event EventHandler<GameMessageEventArgs> OnMessageRised;
+        public event EventHandler<GameMessageEventArgs> OnMessageRaised;
         private Monster _currentMonster;
         private Location _currentLocation;
         public World CurrentWorld { get; set; }
@@ -43,15 +43,21 @@ namespace Engine.ViewModels
 
                 if (_currentMonster != null)
                 {
-                    RaisedMessage("");
-                    RaisedMessage($"You see {CurrentMonster.Name} here!");
+                    RaiseMessage("");
+                    RaiseMessage($"You see {CurrentMonster.Name} here!");
                 }
             }
         }
+        public Weapon CurrentWeapon { get; set; } 
         public GameSession()
         {
-            CurrentPlayer = new Player { Name = "Nikita", CharacterClass = "This method is not inp", ExperiencePoints = 0, Gold = 100, HitPoints = 10, Level = 0};
+            CurrentPlayer = new Player { Name = "Nikita", CharacterClass = "This method is not inp", ExperiencePoints = 0, Gold = 100, HitPoints = 10, Level = 1};
             
+            if (!CurrentPlayer.Weapons.Any())
+            {
+                CurrentPlayer.AddItemToInventory(ItemFactory.CreateGameItem(1001));
+            }
+
             CurrentWorld = WorldFactory.CreateWorld();
 
             CurrentLocation = CurrentWorld.LocationAt(0, -1);
@@ -106,9 +112,79 @@ namespace Engine.ViewModels
         {
             CurrentMonster = CurrentLocation.GetMonster();
         }
-        private void RaisedMessage(string message)
+        public void AttackCurrentMonster()
         {
-            OnMessageRised?.Invoke(this, new GameMessageEventArgs(message));
+            if (CurrentWeapon == null)
+            {
+                RaiseMessage("You must select a weapon first, dumbass!");
+                return;
+            }
+
+            // Определяет урон по понстру
+            int damageToMonster = RandomNumberGenerator.NumberBetween(CurrentWeapon.MinDMG, CurrentWeapon.MaxDMG);
+
+            if (damageToMonster == 0)
+            {
+                RaiseMessage($"Oh god, how could you MISS THIS?! The {CurrentMonster.Name} took 0 dmg");
+            }
+            else
+            {
+                CurrentMonster.HitPoints -= damageToMonster;
+                RaiseMessage($"You hit {CurrentMonster.Name} for {damageToMonster} HP");
+            }
+
+            //Если монстр убит, выдается опыт, золото, предметы
+            if (CurrentMonster.HitPoints <= 0)
+            {
+                RaiseMessage("");
+                RaiseMessage($"You defeated the {CurrentMonster.Name}");
+
+                CurrentPlayer.ExperiencePoints += CurrentMonster.RewardExperiencePoints;
+                RaiseMessage($"You receive {CurrentMonster.RewardExperiencePoints} experience points");
+
+                CurrentPlayer.Gold += CurrentMonster.RewardGold;
+                RaiseMessage($"You receive {CurrentMonster.RewardGold} gold");
+
+                foreach(ItemQuantity itemQuantity in CurrentMonster.Inventory)
+                {
+                    GameItem item = ItemFactory.CreateGameItem(itemQuantity.Id);
+                    CurrentPlayer.AddItemToInventory(item);                                             //количество предметов НИКАК НЕ РЕАЛИЗОВАНО
+                    RaiseMessage($"You receive {itemQuantity.Quantity} {item.Name}");
+                }
+                
+                //Переход к следующему моснтру в локации
+                GetMonsterAtLocation();
+            }
+            else
+            {
+                int damageToPlayer = RandomNumberGenerator.NumberBetween(CurrentMonster.MinimumDamage, CurrentMonster.MaximumDamage);
+
+                if (damageToPlayer == 0)
+                {
+                    RaiseMessage("The monster attacks, but misses you!");
+                }
+                else
+                {
+                    CurrentPlayer.HitPoints -= damageToPlayer;
+                    RaiseMessage($"The {CurrentMonster.Name} hit you for {damageToPlayer} HP");
+                }
+
+                // Если игрока убили, возвращаем его домой
+                if (CurrentPlayer.HitPoints <= 0)
+                {
+                    RaiseMessage("");
+                    RaiseMessage($"The {CurrentMonster.Name} killed you :(");
+
+                    CurrentLocation = CurrentWorld.LocationAt(0, -1); // Возврат домой
+                    CurrentPlayer.HitPoints = CurrentPlayer.Level * 10; // восстанавление хп после смерти
+                }
+
+            }
+            
+        }
+        private void RaiseMessage(string message)
+        {
+            OnMessageRaised?.Invoke(this, new GameMessageEventArgs(message));
         }
     }
 }

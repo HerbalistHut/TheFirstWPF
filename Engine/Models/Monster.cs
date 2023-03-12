@@ -25,10 +25,12 @@ namespace Engine.Models
 
         public int RewardExperiencePoints { get; set; }
         public int RewardGold { get; set; }
+        public int MinimumDamage { get; set; }
+        public int MaximumDamage { get; set; }
 
         public ObservableCollection<ItemQuantity> Inventory { get; set; }
 
-        public Monster(string name, string imageName, int maximumHitPoints, int hitPoints,int rewardExperiencePoints, int rewardGold)
+        public Monster(string name, string imageName, int maximumHitPoints, int hitPoints,int rewardExperiencePoints, int rewardGold, int minimumDamage, int maximumDamage)
         {
             Name = name;
             ImageName = string.Format($"/Engine;component/Images/Monsters/{imageName}") ;
@@ -36,6 +38,8 @@ namespace Engine.Models
             HitPoints = hitPoints;
             RewardExperiencePoints = rewardExperiencePoints;
             RewardGold = rewardGold;
+            MinimumDamage = minimumDamage;
+            MaximumDamage = maximumDamage;
             Inventory = new ObservableCollection<ItemQuantity>();
         }
     }

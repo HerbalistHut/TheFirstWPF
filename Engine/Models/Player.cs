@@ -64,11 +64,22 @@ namespace Engine.Models
         }
 
         public ObservableCollection<GameItem> Inventory { get; set; }
+        public List<GameItem> Weapons => 
+            Inventory.Where(i => i is Weapon).ToList();
         public ObservableCollection<QuestStatus> Quests { get; set; }
         public Player()
         {
             Inventory = new ObservableCollection<GameItem>();
             Quests = new ObservableCollection<QuestStatus>();
+        }
+
+        //Здесь ОРС эвент вызывается для Weapons, чтобы UI при добавлении предмета в инвентарь обновлял и интерфейс с оружием. 
+        //OPC вызывается только для Weapons, так как Inventory и так сам обновляет свой UI при изменение в своей коллексии из-за ObservableCollection
+        public void AddItemToInventory(GameItem item)
+        {
+            Inventory.Add(item);
+
+            OnPropertyChanged(nameof(Weapons));
         }
     }
 }

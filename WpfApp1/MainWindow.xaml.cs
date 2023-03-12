@@ -30,7 +30,7 @@ namespace WPFUI
 
             _gameSession = new GameSession();
             DataContext = _gameSession;
-            _gameSession.OnMessageRised += OnGameMessageRaised;
+            _gameSession.OnMessageRaised += OnGameMessageRaised;
         }
 
         private void OnClick_MoveNorth(object sender, RoutedEventArgs e)
@@ -51,6 +51,11 @@ namespace WPFUI
         private void OnClick_MoveSouth(object sender, RoutedEventArgs e) 
         {
             _gameSession.MoveSouth();
+        }
+
+        private void OnClick_AttackMonster(object sender, RoutedEventArgs e)
+        {
+            _gameSession.AttackCurrentMonster();
         }
 
         // Таким образом мы общаемся между ViewModel и View
