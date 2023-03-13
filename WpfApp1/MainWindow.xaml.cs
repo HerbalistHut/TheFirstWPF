@@ -23,12 +23,11 @@ namespace WPFUI
     /// </summary>
     public partial class MainWindow : Window
     {
-        GameSession _gameSession;
+        GameSession _gameSession = new GameSession();
         public MainWindow()
         {
             InitializeComponent();
 
-            _gameSession = new GameSession();
             DataContext = _gameSession;
             _gameSession.OnMessageRaised += OnGameMessageRaised;
         }

@@ -33,7 +33,7 @@ namespace Engine.Models
         public Monster(string name, string imageName, int maximumHitPoints, int hitPoints,int rewardExperiencePoints, int rewardGold, int minimumDamage, int maximumDamage)
         {
             Name = name;
-            ImageName = string.Format($"/Engine;component/Images/Monsters/{imageName}") ;
+            ImageName = $"/Engine;component/Images/Monsters/{imageName}";
             MaximumHitPoints = maximumHitPoints;
             HitPoints = hitPoints;
             RewardExperiencePoints = rewardExperiencePoints;
