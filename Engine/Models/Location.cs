@@ -23,8 +23,8 @@ namespace Engine.Models
         {
             if (MonstersHere.Exists(m=>m.MonsterID == monsterID))
             {
-                // This monster has already been added to this location.
-                // So, overwrite the ChanceOfEncountering with the new number.
+                // Этот монстр уже был добавлен на локацию
+                // Тогда перезапишем ChanceOfEncountering с новым значением.
                 MonstersHere.First(m => m.MonsterID == monsterID).ChanceOfEncountering = chanceOfEncountering;
             }
             else
@@ -39,14 +39,14 @@ namespace Engine.Models
             {
                 return null;
             }
-            // Total the percentages of all monsters at this location.
+            // Суммарный процент спавна монстров в этой локации.
             int totalChances = MonstersHere.Sum(m => m.ChanceOfEncountering);
-            // Select a random number between 1 and the total(in case the total chances is not 100).
+            // Выберает случайное число между 1 и общим числом (в случае, если общее количество процентов не равно 100).
             int randomNumber = RandomNumberGenerator.NumberBetween(1, totalChances);
-            // Loop through the monster list, 
-            // adding the monster's percentage chance of appearing to the runningTotal variable.
-            // When the random number is lower than the runningTotal,
-            // that is the monster to return.
+            // Перебираем список монстров, 
+            // добавляем процент шанса спавна монстра в runningTotal.
+            // Когда слуайное число будет меньше runningTotal,
+            // возвращаем этого монстра.
             int runningTotal = 0;
             foreach (MonsterEncounter monsterEncounter in MonstersHere)
             {
@@ -56,7 +56,7 @@ namespace Engine.Models
                     return MonsterFactory.GetMonster(monsterEncounter.MonsterID);
                 }
             }
-            // if there was a problem, return the last monster in a list
+            // Если возникает проблема, на всякий выводим последнего монстра в листе
             return MonsterFactory.GetMonster(MonstersHere.Last().MonsterID);
         }
     }

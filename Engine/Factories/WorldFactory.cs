@@ -44,7 +44,7 @@ namespace Engine.Factories
                 "The trees in this forest are covered with spider webs.",
                 "SpiderForest.png");
 
-            newWorld.LocationAt(2, 0).AddMonster(1, 100);
+            newWorld.LocationAt(2, 0).AddMonster(3, 100);
 
             newWorld.AddLocation(0, 1, "Herbalist's hut",
                 "You see a small hut, with plants drying from the roof.",
@@ -55,7 +55,7 @@ namespace Engine.Factories
             newWorld.AddLocation(0, 2, "Herbalist's garden",
                 "There are many plants here, with snakes hiding behind them.",
                 "herbarist.png");
-            newWorld.LocationAt(0, 2).AddMonster(3, 100);
+            newWorld.LocationAt(0, 2).AddMonster(1, 100);
 
             return newWorld;
         }

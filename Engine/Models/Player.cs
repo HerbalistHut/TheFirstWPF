@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -80,6 +81,25 @@ namespace Engine.Models
             Inventory.Add(item);
 
             OnPropertyChanged(nameof(Weapons));
+        }
+
+        public void RemoveItemFromInventory(GameItem item)
+        {
+            Inventory.Remove(item);
+
+            OnPropertyChanged(nameof(Weapons));
+        }
+
+        public bool HasAllTheseItems(List<ItemQuantity> items)
+        {
+            foreach (var item in items)
+            {
+                if (Inventory.Count(i => i.Id == item.Id) < item.Quantity)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
