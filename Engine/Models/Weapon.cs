@@ -11,7 +11,7 @@ namespace Engine.Models
         public int MinDMG { get; set; }
         public int MaxDMG { get; set; }
         public Weapon(int id, string name, int price, int minDMG, int maxDMG) 
-            : base(id, name, price) 
+            : base(id, name, price, true) 
         {
             MinDMG = minDMG;
             MaxDMG = maxDMG;
