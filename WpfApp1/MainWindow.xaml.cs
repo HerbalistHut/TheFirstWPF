@@ -15,6 +15,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Engine.ViewModels;
 using Engine.EventArgs;
+using WpfApp1;
 
 namespace WPFUI
 {
@@ -55,6 +56,18 @@ namespace WPFUI
         private void OnClick_AttackMonster(object sender, RoutedEventArgs e)
         {
             _gameSession.AttackCurrentMonster();
+        }
+
+        private void OnClick_DisplayTradeScreen(object sender, RoutedEventArgs e)
+        {
+            TradeScreen tradeScreen = new TradeScreen();
+
+            // Конкретно тут это используется для того, чтобы отцентрова TradeScreen относительно главного окна
+            tradeScreen.Owner = this;
+            tradeScreen.DataContext = _gameSession;
+
+            // Используется ShowDialog(), а не Show() для того, чтобы пользователь не мог взаимодействовать с MainWindow, пока TradeScreen не будет закрыт 
+            tradeScreen.ShowDialog();
         }
 
         // Таким образом мы общаемся между ViewModel и View

@@ -7,6 +7,7 @@ using Engine.Models;
 using Engine.Factories;
 using System.ComponentModel;
 using Engine.EventArgs;
+using System.Security.Permissions;
 
 namespace Engine.ViewModels
 {
@@ -15,6 +16,7 @@ namespace Engine.ViewModels
         public event EventHandler<GameMessageEventArgs> OnMessageRaised;
         private Monster _currentMonster;
         private Location _currentLocation;
+        private Trader _currentTrader;
         public World CurrentWorld { get; set; }
         public Player CurrentPlayer { get; set; }
         public Location CurrentLocation {
@@ -31,6 +33,8 @@ namespace Engine.ViewModels
                 CompleteQuestAtLocation();
                 GivePlayerQuestAtLocation();
                 GetMonsterAtLocation();
+
+                CurrentTrader = CurrentLocation.TraderHere;
             } 
         }   
         public Monster CurrentMonster
@@ -50,6 +54,17 @@ namespace Engine.ViewModels
             }
         }
         public Weapon CurrentWeapon { get; set; } 
+        public Trader CurrentTrader
+        {
+            get => _currentTrader;
+            set
+            {
+                _currentTrader = value;
+
+                OnPropertyChanged(nameof(CurrentTrader));
+                OnPropertyChanged(nameof(HasTrader));
+            }
+        }
         public GameSession()
         {
             CurrentPlayer = new Player { Name = "Nikita", CharacterClass = "This method is not inp", ExperiencePoints = 0, Gold = 100, HitPoints = 10, Level = 1};
@@ -82,6 +97,7 @@ namespace Engine.ViewModels
         public void MoveEast() 
             => CurrentLocation = CurrentWorld.LocationAt(CurrentLocation.XCoordinate + 1, CurrentLocation.YCoordinate);
         public bool HasMonster => CurrentMonster != null;
+        public bool HasTrader => CurrentTrader != null;
         private void GivePlayerQuestAtLocation()
         {
             foreach(Quest quest in CurrentLocation.QuestsAvailableHere)
