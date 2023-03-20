@@ -45,7 +45,7 @@ namespace Engine.Factories
         {
             if (RandomNumberGenerator.NumberBetween(1, 100) <= pr)
             {
-                monster.Inventory.Add(new ItemQuantity(ItemID, 1));
+                monster.AddItemToInventory(ItemFactory.CreateGameItem(ItemID));
             }
         }
     }

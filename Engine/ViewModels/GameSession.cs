@@ -67,7 +67,7 @@ namespace Engine.ViewModels
         }
         public GameSession()
         {
-            CurrentPlayer = new Player { Name = "Nikita", CharacterClass = "This method is not inp", ExperiencePoints = 0, Gold = 100, HitPoints = 10, Level = 1};
+            CurrentPlayer = new Player { Name = "Nikita", CharacterClass = "This method is not inp", ExperiencePoints = 0, Gold = 100, CurrentHitPoints = 10, Level = 1};
             
             if (!CurrentPlayer.Weapons.Any())
             {
@@ -185,12 +185,12 @@ namespace Engine.ViewModels
             }
             else
             {
-                CurrentMonster.HitPoints -= damageToMonster;
+                CurrentMonster.CurrentHitPoints -= damageToMonster;
                 RaiseMessage($"You hit {CurrentMonster.Name} for {damageToMonster} HP");
             }
 
             //Если монстр убит, выдается опыт, золото, предметы
-            if (CurrentMonster.HitPoints <= 0)
+            if (CurrentMonster.CurrentHitPoints <= 0)
             {
                 RaiseMessage("");
                 RaiseMessage($"You defeated the {CurrentMonster.Name}");
@@ -198,14 +198,13 @@ namespace Engine.ViewModels
                 CurrentPlayer.ExperiencePoints += CurrentMonster.RewardExperiencePoints;
                 RaiseMessage($"You receive {CurrentMonster.RewardExperiencePoints} experience points");
 
-                CurrentPlayer.Gold += CurrentMonster.RewardGold;
-                RaiseMessage($"You receive {CurrentMonster.RewardGold} gold");
+                CurrentPlayer.Gold += CurrentMonster.Gold;
+                RaiseMessage($"You receive {CurrentMonster.Gold} gold");
 
-                foreach(ItemQuantity itemQuantity in CurrentMonster.Inventory)
+                foreach(GameItem gameItem in CurrentMonster.Inventory)
                 {
-                    GameItem item = ItemFactory.CreateGameItem(itemQuantity.Id);
-                    CurrentPlayer.AddItemToInventory(item);                                             //количество предметов НИКАК НЕ РЕАЛИЗОВАНО
-                    RaiseMessage($"You receive {itemQuantity.Quantity} {item.Name}");
+                    CurrentPlayer.AddItemToInventory(gameItem);
+                    RaiseMessage($"You receive one {gameItem.Name}");
                 }
                 
                 //Переход к следующему моснтру в локации
@@ -221,18 +220,18 @@ namespace Engine.ViewModels
                 }
                 else
                 {
-                    CurrentPlayer.HitPoints -= damageToPlayer;
+                    CurrentPlayer.CurrentHitPoints -= damageToPlayer;
                     RaiseMessage($"The {CurrentMonster.Name} hit you for {damageToPlayer} HP");
                 }
 
                 // Если игрока убили, возвращаем его домой
-                if (CurrentPlayer.HitPoints <= 0)
+                if (CurrentPlayer.CurrentHitPoints <= 0)
                 {
                     RaiseMessage("");
                     RaiseMessage($"The {CurrentMonster.Name} killed you :(");
 
                     CurrentLocation = CurrentWorld.LocationAt(0, -1); // Возврат домой
-                    CurrentPlayer.HitPoints = CurrentPlayer.Level * 10; // восстанавление хп после смерти
+                    CurrentPlayer.CurrentHitPoints = CurrentPlayer.Level * 10; // восстанавление хп после смерти
                 }
 
             }
