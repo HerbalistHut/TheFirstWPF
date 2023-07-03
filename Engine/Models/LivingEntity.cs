@@ -151,7 +151,9 @@ namespace Engine.Models
 
             Inventory.Remove(item);
 
-            GroupedInventoryItem groupedInventoryItem = GroupedInventory.FirstOrDefault(gi => gi.Item == item);
+            GroupedInventoryItem groupedInventoryItem = item.IsUnique ?
+                GroupedInventory.FirstOrDefault(gi => gi.Item == item) :
+                GroupedInventory.FirstOrDefault(gi => gi.Item.Id == item.Id); // Several non-unique item must be removed by thair ID's, otherwise that won't work even if those items are 100% identical (why? idk) 
 
             if (groupedInventoryItem == null)
             {
