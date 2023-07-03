@@ -9,9 +9,8 @@ namespace Engine.Models
 {
     public class Trader : LivingEntity
     {
-        public Trader(string name) 
+        public Trader(string name) : base(name, 99999, 99999, 999999) 
         {
-            Name = name;
         } 
     }
 }

@@ -17,7 +17,7 @@ namespace Engine.Models
         public string Name
         {
             get => _name;
-            set
+            private set
             {
                 _name = value;
                 OnPropertyChanged(nameof(Name));
@@ -26,7 +26,7 @@ namespace Engine.Models
         public int CurrentHitPoints
         {
             get => _currentHitPoints;
-            set
+            private set
             {
                 _currentHitPoints = value;
                 OnPropertyChanged(nameof(CurrentHitPoints));
@@ -35,7 +35,7 @@ namespace Engine.Models
         public int MaximumHitPoints
         {
             get => _maximumHitPoints;
-            set
+            private set
             {
                 _maximumHitPoints = value;
                 OnPropertyChanged(nameof(MaximumHitPoints));
@@ -44,24 +44,70 @@ namespace Engine.Models
         public int Gold
         {
             get => _gold;
-            set
+            private set
             {
                 _gold = value;
                 OnPropertyChanged(nameof(Gold));
             }
         }
+        public bool IsDead => CurrentHitPoints <= 0;
+
         // На данный момент надо сделать ещё несколько вещей, прежде чем убирать свойство Inventory, поэтому сейчас тут существует кое-какое дублирование кода
         public ObservableCollection<GameItem> Inventory { get; set; }
         public ObservableCollection<GroupedInventoryItem> GroupedInventory { get; set; }
         public List<GameItem> Weapons =>
             Inventory.Where(i => i is Weapon).ToList();
 
-        protected LivingEntity()
+        
+        public event EventHandler OnKilled;
+        protected LivingEntity(string name, int currentHitPoints, int maximumHitPoints, int gold)
         {
+            Name = name;
+            CurrentHitPoints = currentHitPoints;
+            MaximumHitPoints = maximumHitPoints;
+            Gold = gold;
+
             Inventory = new ObservableCollection<GameItem>();
             GroupedInventory = new ObservableCollection<GroupedInventoryItem>();
         }
 
+        public void TakeDamege (int hitPointsOfDamage)
+        {
+            CurrentHitPoints -= hitPointsOfDamage;
+            if (CurrentHitPoints < 0)
+            {
+                CurrentHitPoints = 0;
+                RaisedOnKillEvent();
+            }
+        }
+
+        public void Heal (int hitPointsToHeal)
+        {
+            CurrentHitPoints += hitPointsToHeal;
+            if (CurrentHitPoints > MaximumHitPoints)
+            {
+                CurrentHitPoints = MaximumHitPoints; 
+            }
+        }
+
+        public void CompletelyHeal()
+        {
+            CurrentHitPoints = MaximumHitPoints;
+        }
+
+        public void ReceiveGold(int gold)
+        {
+            Gold += gold;
+        }
+
+        public void SpendGold(int amountOfGold)
+        {
+            if (amountOfGold > Gold)
+            {
+                throw new ArgumentOutOfRangeException($"{Name} only has {Gold} gold, you tried to spend {amountOfGold} gold");
+            }
+            Gold -= amountOfGold;
+        }
         //Здесь ОРС эвент вызывается для Weapons, чтобы UI при добавлении предмета в инвентарь обновлял и интерфейс с оружием. 
         //OPC вызывается только для Weapons, так как Inventory и так сам обновляет свой UI при изменение в своей коллексии из-за ObservableCollection
         public void AddItemToInventory(GameItem item)
@@ -120,6 +166,11 @@ namespace Engine.Models
             {
                 groupedInventoryItem.Quantity--;
             }
+        }
+
+        private void RaisedOnKillEvent()
+        {
+            OnKilled?.Invoke(this, new System.EventArgs());
         }
     }
 }

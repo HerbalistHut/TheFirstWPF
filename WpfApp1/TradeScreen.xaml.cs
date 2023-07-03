@@ -28,13 +28,13 @@ namespace WpfApp1
         }
         private void OnClick_Sell(object sender, RoutedEventArgs e)
         {
-            // ((FrameworkElemetn)... - позволяет веяснить, на какой строчке была нажата кнопка
+            // ((FrameworkElemetn)... - позволяет выяснить, на какой строчке была нажата кнопка
             // можно сразу конвентировать в GameItem, так как каждая строка относится к единственному предмету
             GroupedInventoryItem groupedInventoryItem = ((FrameworkElement)sender).DataContext as GroupedInventoryItem;
 
             if (groupedInventoryItem != null)
             {
-                Session.CurrentPlayer.Gold += groupedInventoryItem.Item.Price;
+                Session.CurrentPlayer.ReceiveGold(groupedInventoryItem.Item.Price);
                 Session.CurrentTrader.AddItemToInventory(groupedInventoryItem.Item);
                 Session.CurrentPlayer.RemoveItemFromInventory(groupedInventoryItem.Item);
             }
@@ -48,7 +48,7 @@ namespace WpfApp1
             {
                 if(Session.CurrentPlayer.Gold >= groupedInventoryItem.Item.Price)
                 {
-                    Session.CurrentPlayer.Gold -= groupedInventoryItem.Item.Price;
+                    Session.CurrentPlayer.SpendGold(groupedInventoryItem.Item.Price);
                     Session.CurrentTrader.RemoveItemFromInventory(groupedInventoryItem.Item);
                     Session.CurrentPlayer.AddItemToInventory(groupedInventoryItem.Item);
                 }
