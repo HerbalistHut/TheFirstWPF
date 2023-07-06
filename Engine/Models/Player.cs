@@ -13,31 +13,29 @@ namespace Engine.Models
     {
         private string _characterClass;
         private int _experiencePoints;
-        private int _level;
-        public string CharacterClass {
+        public string CharacterClass
+        {
             get { return _characterClass; }
-            set 
-            { 
+            set
+            {
                 _characterClass = value;
                 OnPropertyChanged(nameof(CharacterClass));
             }
         }
-        public int ExperiencePoints {
+        public int ExperiencePoints
+        {
             get { return _experiencePoints; }
-            set {
-                _experiencePoints = value;
-                OnPropertyChanged(nameof(ExperiencePoints));
-            }
-        }
-        public int Level {
-            get { return _level; }
-            set 
+            private set
             {
-                _level = value;
-                OnPropertyChanged(nameof(Level));
+                _experiencePoints = value;
+
+                OnPropertyChanged(nameof(ExperiencePoints));
+
+                SetLevelAndMaximumHitPoints();
             }
         }
         public ObservableCollection<QuestStatus> Quests { get; set; }
+        public event EventHandler OnLeveledUp;
         public Player(string name, int currentHitPoints, int maximumHitPoints, int gold, int experiencePoints) :
             base(name, currentHitPoints, maximumHitPoints, gold)
         {
@@ -55,6 +53,25 @@ namespace Engine.Models
                 }
             }
             return true;
+        }
+
+        public void AddExperience(int experiencePoints)
+        {
+            ExperiencePoints += experiencePoints;
+        }
+
+        private void SetLevelAndMaximumHitPoints()
+        {
+            int originalLevel = Level;
+
+            Level = (ExperiencePoints / 100) + 1;
+
+            if (originalLevel < Level)
+            {
+                MaximumHitPoints = Level * 10;
+                
+                OnLeveledUp?.Invoke(this, System.EventArgs.Empty);
+            }
         }
     }
 }

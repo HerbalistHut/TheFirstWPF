@@ -13,7 +13,7 @@ namespace Engine.Models
         private int _currentHitPoints;
         private int _maximumHitPoints;
         private int _gold;
-
+        private int _level;
         public string Name
         {
             get => _name;
@@ -35,7 +35,7 @@ namespace Engine.Models
         public int MaximumHitPoints
         {
             get => _maximumHitPoints;
-            private set
+            protected set
             {
                 _maximumHitPoints = value;
                 OnPropertyChanged(nameof(MaximumHitPoints));
@@ -50,6 +50,15 @@ namespace Engine.Models
                 OnPropertyChanged(nameof(Gold));
             }
         }
+        public int Level
+        {
+            get { return _level; }
+            protected set
+            {
+                _level = value;
+                OnPropertyChanged(nameof(Level));
+            }
+        }
         public bool IsDead => CurrentHitPoints <= 0;
 
         // На данный момент надо сделать ещё несколько вещей, прежде чем убирать свойство Inventory, поэтому сейчас тут существует кое-какое дублирование кода
@@ -58,14 +67,14 @@ namespace Engine.Models
         public List<GameItem> Weapons =>
             Inventory.Where(i => i is Weapon).ToList();
 
-        
         public event EventHandler OnKilled;
-        protected LivingEntity(string name, int currentHitPoints, int maximumHitPoints, int gold)
+        protected LivingEntity(string name, int currentHitPoints, int maximumHitPoints, int gold, int level = 1)
         {
             Name = name;
             CurrentHitPoints = currentHitPoints;
             MaximumHitPoints = maximumHitPoints;
             Gold = gold;
+            Level = level;
 
             Inventory = new ObservableCollection<GameItem>();
             GroupedInventory = new ObservableCollection<GroupedInventoryItem>();
