@@ -18,7 +18,7 @@ namespace Engine.ViewModels
         private Location _currentLocation;
         private Trader _currentTrader;
         private Player _currentPlayer;
-        public World CurrentWorld { get; set; }
+        public World CurrentWorld { get; }
         public Player CurrentPlayer {
             get => _currentPlayer;
             set
@@ -44,7 +44,7 @@ namespace Engine.ViewModels
             set
             {
                 _currentLocation = value;
-                OnPropertyChanged(nameof(CurrentLocation));
+                OnPropertyChanged();
                 OnPropertyChanged(nameof(HasLocationToEast));
                 OnPropertyChanged(nameof(HasLocationToWest));
                 OnPropertyChanged(nameof(HasLocationToSouth));
@@ -67,7 +67,7 @@ namespace Engine.ViewModels
                     _currentMonster.OnKilled -= OnCurrentMonsterKilled;
                 }
                 _currentMonster = value;
-                OnPropertyChanged(nameof(CurrentMonster));
+                OnPropertyChanged();
                 OnPropertyChanged(nameof(HasMonster));
 
                 if (_currentMonster != null)
@@ -78,7 +78,6 @@ namespace Engine.ViewModels
                 }
             }
         }
-        public Weapon CurrentWeapon { get; set; } 
         public Trader CurrentTrader
         {
             get => _currentTrader;
@@ -86,10 +85,12 @@ namespace Engine.ViewModels
             {
                 _currentTrader = value;
 
-                OnPropertyChanged(nameof(CurrentTrader));
+                OnPropertyChanged();
                 OnPropertyChanged(nameof(HasTrader));
             }
         }
+        public Weapon CurrentWeapon { get; set; } 
+       
         public GameSession()
         {
             CurrentPlayer = new Player("Nikitka", 10, 10, 1, 95);

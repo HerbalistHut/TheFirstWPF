@@ -8,8 +8,8 @@ namespace Engine.Models
 {
     public class Weapon : GameItem
     {
-        public int MinDMG { get; set; }
-        public int MaxDMG { get; set; }
+        public int MinDMG { get; }
+        public int MaxDMG { get; }
         public Weapon(int id, string name, int price, int minDMG, int maxDMG) 
             : base(id, name, price, true) 
         {
