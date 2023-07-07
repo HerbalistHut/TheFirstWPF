@@ -1,6 +1,10 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Engine.ViewModels;
+using Engine.Models;
+using System.Linq;
+using Engine.Factories;
+using Engine.EventArgs;
 
 namespace TestEngine.VIewModels
 {
@@ -24,6 +28,26 @@ namespace TestEngine.VIewModels
 
             Assert.AreEqual("Home", gameSession.CurrentLocation.Name);
             Assert.AreEqual(gameSession.CurrentPlayer.Level * 10, gameSession.CurrentPlayer.CurrentHitPoints);
+        }
+
+        //This test showed that you get a new monster if you kill it manually, the new monster does not come with OnMonsterKilled event. MUST BE FIXED (a bit later :) )
+        [TestMethod]
+        public void TestCompleteHerbalistQuest()
+        {
+            GameSession gameSession = new GameSession();
+
+            gameSession.MoveNorth();
+            gameSession.MoveNorth();
+            gameSession.CurrentWeapon = new Weapon(0,"0",0,1000,1000);
+
+            for (int i = 0; i < 100; i++) 
+            {
+                gameSession.AttackCurrentMonster();
+            }
+
+            gameSession.MoveSouth();
+
+            Assert.IsTrue(gameSession.CurrentPlayer.Quests.Any(q => q.IsCompleted && q.PlayerQuest.Id == 1));
         }
     }
 }

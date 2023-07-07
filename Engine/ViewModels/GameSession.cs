@@ -221,7 +221,6 @@ namespace Engine.ViewModels
                 // Get to next monster
                 GetMonsterAtLocation();
             }
-
             else
             {
                 int damageToPlayer = RandomNumberGenerator.NumberBetween(CurrentMonster.MinimumDamage, CurrentMonster.MaximumDamage);

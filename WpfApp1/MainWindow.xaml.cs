@@ -16,6 +16,7 @@ using System.Windows.Shapes;
 using Engine.ViewModels;
 using Engine.EventArgs;
 using WpfApp1;
+using System.Runtime.InteropServices;
 
 namespace WPFUI
 {
@@ -78,5 +79,10 @@ namespace WPFUI
             GameMessages.ScrollToEnd();
         }
         
+        private void OnClick_KillMonster(object sender, RoutedEventArgs e)
+        {
+            _gameSession.CurrentMonster.TakeDamege(9999);
+            _gameSession.GetMonsterAtLocation();
+        }
     }
 }

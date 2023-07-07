@@ -57,6 +57,7 @@
             <Label Grid.Row="4" Grid.Column="1" Content="{Binding CurrentPlayer.ExperiencePoints}"/>
             <Label Grid.Row="5" Grid.Column="0" Content="Level:"/>
             <Label Grid.Row="5" Grid.Column="1" Content="{Binding CurrentPlayer.Level}"/>
+            <Button Margin="0,86,0,-87" Grid.Row="5" Content="Kill Enemy" Click="OnClick_KillMonster"/>
         </Grid>
         <!--Gameplay-->
         <Grid Grid.Row="1" Grid.Column="1" Background="Olive">
