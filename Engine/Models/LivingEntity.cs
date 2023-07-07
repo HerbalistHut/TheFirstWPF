@@ -83,7 +83,7 @@ namespace Engine.Models
         public void TakeDamege (int hitPointsOfDamage)
         {
             CurrentHitPoints -= hitPointsOfDamage;
-            if (CurrentHitPoints < 0)
+            if (CurrentHitPoints <= 0)
             {
                 CurrentHitPoints = 0;
                 RaisedOnKillEvent();
