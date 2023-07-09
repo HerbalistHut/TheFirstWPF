@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Engine.Actions;
 
 namespace Engine.Factories
 {
@@ -13,6 +14,7 @@ namespace Engine.Factories
 
         static ItemFactory()
         {
+            BuildWeaponItem(0, "Cheat", 0, 1000, 1000);
             BuildWeaponItem(1001, "Pointy Stick", 1, 1, 2);
             BuildWeaponItem(1002, "Rusty Sword", 5, 5, 12);
             BuildMiscellaneousItem(9001, "Snake fang", 1);
@@ -33,7 +35,11 @@ namespace Engine.Factories
         }
         private static void BuildWeaponItem(int id, string name, int price, int minimumDamage, int maximumDamage) 
         {
-            _standardGameItems.Add(new GameItem(GameItem.ItemCategory.Weapon, id, name, price, true, minimumDamage, maximumDamage));
+            GameItem weapon = new GameItem(GameItem.ItemCategory.Weapon, id, name, price, true);
+
+            weapon.Action = new AttacWithWeapon(weapon, minimumDamage, maximumDamage);
+
+            _standardGameItems.Add(weapon);
         }
     }
 }

@@ -38,9 +38,8 @@ namespace TestEngine.VIewModels
 
             gameSession.MoveNorth();
             gameSession.MoveNorth();
-            gameSession.CurrentWeapon = new GameItem(GameItem.ItemCategory.Weapon,0,"0",0,true,1000,1000);
+            gameSession.CurrentPlayer.CurrentWeapon = ItemFactory.CreateGameItem(0);
 
-            Assert.IsTrue(gameSession.CurrentPlayer.Weapons.Any(w => w.Name == "Rusty Sword"));
             for (int i = 0; i < 100; i++) 
             {
                 gameSession.AttackCurrentMonster();
@@ -49,6 +48,7 @@ namespace TestEngine.VIewModels
             gameSession.MoveSouth();
 
             Assert.IsTrue(gameSession.CurrentPlayer.Quests.Any(q => q.IsCompleted && q.PlayerQuest.Id == 1));
+            Assert.IsTrue(gameSession.CurrentPlayer.Weapons.Any(w => w.Name == "Rusty Sword"));
         }
     }
 }

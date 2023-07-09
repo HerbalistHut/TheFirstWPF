@@ -26,6 +26,7 @@ namespace Engine.ViewModels
                 //This is used just for optimization despite the fact that the programm is small
                 if (_currentPlayer != null)
                 {
+                    _currentPlayer.OnActionPerformed -= OnCurrentPlayerActionPerformed;
                     _currentPlayer.OnKilled -= OnCurrentPlayerKilled;
                     _currentPlayer.OnLeveledUp -= OnCurrentPlayerLeveledUp;
                 }
@@ -34,6 +35,7 @@ namespace Engine.ViewModels
 
                 if (_currentPlayer != null)
                 {
+                    _currentPlayer.OnActionPerformed += OnCurrentPlayerActionPerformed;
                     _currentPlayer.OnKilled += OnCurrentPlayerKilled;
                     _currentPlayer.OnLeveledUp += OnCurrentPlayerLeveledUp;
                 }
@@ -89,7 +91,6 @@ namespace Engine.ViewModels
                 OnPropertyChanged(nameof(HasTrader));
             }
         }
-        public GameItem CurrentWeapon { get; set; } 
        
         public GameSession()
         {
@@ -197,24 +198,13 @@ namespace Engine.ViewModels
         }
         public void AttackCurrentMonster()
         {
-            if (CurrentWeapon == null)
+            if (CurrentPlayer.CurrentWeapon == null)
             {
                 RaiseMessage("You must select a weapon first, dumbass!");
                 return;
             }
 
-            // Определяет урон по понстру
-            int damageToMonster = RandomNumberGenerator.NumberBetween(CurrentWeapon.MinimumDamage, CurrentWeapon.MaximumDamage);
-
-            if (damageToMonster == 0)
-            {
-                RaiseMessage($"Oh god, how could you MISS THIS?! The {CurrentMonster.Name} took 0 dmg");
-            }
-            else
-            {
-                RaiseMessage($"You hit {CurrentMonster.Name} for {damageToMonster} HP");
-                CurrentMonster.TakeDamege(damageToMonster);
-            }
+            CurrentPlayer.UseCurrentWeaponOn(CurrentMonster);
 
             if (CurrentMonster.IsDead)
             {
@@ -242,7 +232,7 @@ namespace Engine.ViewModels
                 RaiseMessage("");
                 RaiseMessage("You have been killed :(");
 
-                CurrentLocation = CurrentWorld.LocationAt(0, -1); // Возврат домой
+                CurrentLocation = CurrentWorld.LocationAt(0, -1); // Return Home
             CurrentPlayer.CompletelyHeal();
         }
         private void OnCurrentMonsterKilled (object sender, System.EventArgs e)
@@ -266,7 +256,10 @@ namespace Engine.ViewModels
         {
             RaiseMessage($"You are now level {CurrentPlayer.Level}");
         }
-
+        private void OnCurrentPlayerActionPerformed(object sender, string result)
+        {
+            RaiseMessage(result);
+        }
         private void RaiseMessage(string message)
         {
             OnMessageRaised?.Invoke(this, new GameMessageEventArgs(message));
