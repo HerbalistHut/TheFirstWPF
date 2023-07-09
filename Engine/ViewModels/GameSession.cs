@@ -89,7 +89,7 @@ namespace Engine.ViewModels
                 OnPropertyChanged(nameof(HasTrader));
             }
         }
-        public Weapon CurrentWeapon { get; set; } 
+        public GameItem CurrentWeapon { get; set; } 
        
         public GameSession()
         {
@@ -204,7 +204,7 @@ namespace Engine.ViewModels
             }
 
             // Определяет урон по понстру
-            int damageToMonster = RandomNumberGenerator.NumberBetween(CurrentWeapon.MinDMG, CurrentWeapon.MaxDMG);
+            int damageToMonster = RandomNumberGenerator.NumberBetween(CurrentWeapon.MinimumDamage, CurrentWeapon.MaximumDamage);
 
             if (damageToMonster == 0)
             {

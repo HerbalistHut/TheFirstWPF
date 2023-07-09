@@ -30,7 +30,7 @@ namespace TestEngine.VIewModels
             Assert.AreEqual(gameSession.CurrentPlayer.Level * 10, gameSession.CurrentPlayer.CurrentHitPoints);
         }
 
-        //This test showed that you get a new monster if you kill it manually, the new monster does not come with OnMonsterKilled event. MUST BE FIXED (a bit later :) )
+        //This test showed that you get a new monster ONLY if you kill it manually, the new monster does not come with OnMonsterKilled event. MUST BE FIXED (a bit later :) )
         [TestMethod]
         public void TestCompleteHerbalistQuest()
         {
@@ -38,8 +38,9 @@ namespace TestEngine.VIewModels
 
             gameSession.MoveNorth();
             gameSession.MoveNorth();
-            gameSession.CurrentWeapon = new Weapon(0,"0",0,1000,1000);
+            gameSession.CurrentWeapon = new GameItem(GameItem.ItemCategory.Weapon,0,"0",0,true,1000,1000);
 
+            Assert.IsTrue(gameSession.CurrentPlayer.Weapons.Any(w => w.Name == "Rusty Sword"));
             for (int i = 0; i < 100; i++) 
             {
                 gameSession.AttackCurrentMonster();

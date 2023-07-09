@@ -65,7 +65,7 @@ namespace Engine.Models
         public ObservableCollection<GameItem> Inventory { get; }
         public ObservableCollection<GroupedInventoryItem> GroupedInventory { get; }
         public List<GameItem> Weapons =>
-            Inventory.Where(i => i is Weapon).ToList();
+            Inventory.Where(i => i.Category == GameItem.ItemCategory.Weapon).ToList();
 
         public event EventHandler OnKilled;
         protected LivingEntity(string name, int currentHitPoints, int maximumHitPoints, int gold, int level = 1)
