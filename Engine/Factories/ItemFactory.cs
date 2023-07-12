@@ -40,10 +40,12 @@ namespace Engine.Factories
         {
             return _standardGameItems.FirstOrDefault(item => item.Id == id)?.Clone();
         }
+        
         private static void BuildMiscellaneousItem(int id, string name, int price)
         {
             _standardGameItems.Add(new GameItem(GameItem.ItemCategory.Miscellaneous, id, name, price));
         }
+        
         private static void BuildWeaponItem(int id, string name, int price, int minimumDamage, int maximumDamage) 
         {
             GameItem weapon = new GameItem(GameItem.ItemCategory.Weapon, id, name, price, true);
@@ -52,6 +54,7 @@ namespace Engine.Factories
 
             _standardGameItems.Add(weapon);
         }
+       
         private static void BuildHealingItem(int id, string name, int price, int hitPointsToHeal)
         {
             GameItem item = new GameItem(GameItem.ItemCategory.Consumable, id, name, price);
@@ -59,6 +62,11 @@ namespace Engine.Factories
             item.Action = new Heal(item, hitPointsToHeal);
 
             _standardGameItems.Add(item);
+        }
+
+        public static string ItemName (int itemID)
+        {
+            return _standardGameItems.FirstOrDefault(i => i.Id == itemID)?.Name ?? "NULL";
         }
     }
 }

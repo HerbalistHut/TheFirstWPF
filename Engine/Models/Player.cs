@@ -45,18 +45,6 @@ namespace Engine.Models
             Recipes = new ObservableCollection<Recipe>();
         }
 
-        public bool HasAllTheseItems(List<ItemQuantity> items)
-        {
-            foreach (var item in items)
-            {
-                if (Inventory.Count(i => i.Id == item.Id) < item.Quantity)
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
-
         public void AddExperience(int experiencePoints)
         {
             ExperiencePoints += experiencePoints;

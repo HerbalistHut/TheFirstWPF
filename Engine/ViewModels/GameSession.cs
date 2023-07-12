@@ -107,6 +107,10 @@ namespace Engine.ViewModels
             CurrentPlayer.AddItemToInventory(ItemFactory.CreateGameItem(2001));
             CurrentPlayer.AddItemToInventory(ItemFactory.CreateGameItem(2001));
             CurrentPlayer.LearnRecipe(RecipeFactory.RecipeById(1));
+            CurrentPlayer.AddItemToInventory(ItemFactory.CreateGameItem(3001));
+            CurrentPlayer.AddItemToInventory(ItemFactory.CreateGameItem(3001));
+            CurrentPlayer.AddItemToInventory(ItemFactory.CreateGameItem(3002));
+            CurrentPlayer.AddItemToInventory(ItemFactory.CreateGameItem(3003));
 
             CurrentWorld = WorldFactory.CreateWorld();
 
@@ -116,22 +120,32 @@ namespace Engine.ViewModels
 
         public bool HasLocationToNorth 
             => (CurrentWorld.LocationAt(CurrentLocation.XCoordinate, CurrentLocation.YCoordinate + 1) != null);
+        
         public bool HasLocationToSouth 
             => (CurrentWorld.LocationAt(CurrentLocation.XCoordinate, CurrentLocation.YCoordinate - 1) != null);
+       
         public bool HasLocationToWest
             => (CurrentWorld.LocationAt(CurrentLocation.XCoordinate - 1, CurrentLocation.YCoordinate) != null);
+        
         public bool HasLocationToEast
             => (CurrentWorld.LocationAt(CurrentLocation.XCoordinate + 1, CurrentLocation.YCoordinate) != null);
+       
         public void MoveNorth()
             => CurrentLocation = CurrentWorld.LocationAt(CurrentLocation.XCoordinate, CurrentLocation.YCoordinate + 1);
+       
         public void MoveSouth() 
             => CurrentLocation = CurrentWorld.LocationAt(CurrentLocation.XCoordinate, CurrentLocation.YCoordinate - 1);
+       
         public void MoveWest() 
             => CurrentLocation = CurrentWorld.LocationAt(CurrentLocation.XCoordinate - 1, CurrentLocation.YCoordinate);
+       
         public void MoveEast() 
             => CurrentLocation = CurrentWorld.LocationAt(CurrentLocation.XCoordinate + 1, CurrentLocation.YCoordinate);
+       
         public bool HasMonster => CurrentMonster != null;
+        
         public bool HasTrader => CurrentTrader != null;
+        
         private void GivePlayerQuestAtLocation()
         {
             foreach(Quest quest in CurrentLocation.QuestsAvailableHere)
@@ -159,6 +173,7 @@ namespace Engine.ViewModels
                 }
             }
         }
+        
         private void CompleteQuestAtLocation()
         {
             foreach(Quest quest in CurrentLocation.QuestsAvailableHere)
@@ -170,39 +185,36 @@ namespace Engine.ViewModels
                 {
                     if (CurrentPlayer.HasAllTheseItems(quest.ItemsToComplete))
                     {
-                        foreach (ItemQuantity iq in quest.ItemsToComplete)
+                        CurrentPlayer.RemoveItemFromInventory(quest.ItemsToComplete);
+
+                        RaiseMessage("");
+                        RaiseMessage($"You completed {quest.Name} quest");
+
+                        RaiseMessage($"You receive {quest.RewardExperiencePoints} EXP");
+                        CurrentPlayer.AddExperience(quest.RewardExperiencePoints);
+
+                        RaiseMessage($"You receive {quest.RewardGold} gold");
+                        CurrentPlayer.ReceiveGold(quest.RewardGold);
+
+                        foreach (var i in quest.RewardItems)
                         {
-                            for (int i  = 0; i < iq.Quantity; i++)
-                            {
-                                CurrentPlayer.RemoveItemFromInventory(CurrentPlayer.Inventory.FirstOrDefault(item => item.Id == iq.Id));
-                            }
-
-                            RaiseMessage("");
-                            RaiseMessage($"You completed {quest.Name} quest");
-
-                            CurrentPlayer.AddExperience(quest.RewardExperiencePoints);
-                            RaiseMessage($"You receive {quest.RewardExperiencePoints} EXP");
-
-                            CurrentPlayer.ReceiveGold(quest.RewardGold);
-                            RaiseMessage($"You receive {quest.RewardGold} gold");
-                            
-                            foreach (var i in quest.RewardItems)
-                            {
-                                GameItem reward = ItemFactory.CreateGameItem(i.Id);
-                                CurrentPlayer.Inventory.Add(reward);
-                                RaiseMessage($"You receive {reward.Name}");
-                            }
-
-                            questToComplete.IsCompleted = true;
+                            GameItem reward = ItemFactory.CreateGameItem(i.Id);
+                            RaiseMessage($"You receive {reward.Name}");
+                            CurrentPlayer.Inventory.Add(reward);
                         }
+
+                        questToComplete.IsCompleted = true;
+
                     }
                 }
             }
         }
+        
         public void GetMonsterAtLocation()
         {
             CurrentMonster = CurrentLocation.GetMonster();
         }
+        
         public void AttackCurrentMonster()
         {
             if (CurrentPlayer.CurrentWeapon == null)
@@ -223,12 +235,39 @@ namespace Engine.ViewModels
                 CurrentMonster.UseCurrentWeaponOn(CurrentPlayer);
             }
             
-        }
+        } 
 
+        public void CraftItemUsing(Recipe recipe)
+        {
+            if (CurrentPlayer.HasAllTheseItems(recipe.Ingredients))
+            {
+                CurrentPlayer.RemoveItemFromInventory(recipe.Ingredients);
+
+                foreach (ItemQuantity itemQuantity in recipe.OutputItems)
+                {
+                    for (int i = 0; i < itemQuantity.Quantity; i++)
+                    {
+                        GameItem outputItem = ItemFactory.CreateGameItem(itemQuantity.Id);
+                        CurrentPlayer.AddItemToInventory(outputItem);
+                        RaiseMessage($"You just crafted one {outputItem.Name}");
+                    }
+                }
+            }
+            else
+            {
+                RaiseMessage("To craft this you need:");
+                foreach(ItemQuantity itemQuantity in recipe.Ingredients)
+                {
+                    RaiseMessage($"{itemQuantity.Quantity} {ItemFactory.ItemName(itemQuantity.Id)}");
+                }
+            }
+        }
+        
         private void OnCurrentMonsterActionPerformed(object sender, string result)
         {
             RaiseMessage(result);
         }
+        
         private void OnCurrentPlayerKilled (object sender, System.EventArgs e)
         {
                 RaiseMessage("");
@@ -237,6 +276,7 @@ namespace Engine.ViewModels
                 CurrentLocation = CurrentWorld.LocationAt(0, -1); // Return Home
             CurrentPlayer.CompletelyHeal();
         }
+        
         private void OnCurrentMonsterKilled (object sender, System.EventArgs e)
         {
             RaiseMessage("");
@@ -254,14 +294,17 @@ namespace Engine.ViewModels
                 RaiseMessage($"You receive one {gameItem.Name}");
             }
         }
+        
         private void OnCurrentPlayerLeveledUp(object sender, System.EventArgs e)
         {
             RaiseMessage($"You are now level {CurrentPlayer.Level}");
         }
+        
         private void OnCurrentPlayerActionPerformed(object sender, string result)
         {
             RaiseMessage(result);
         }
+        
         private void RaiseMessage(string message)
         {
             OnMessageRaised?.Invoke(this, new GameMessageEventArgs(message));

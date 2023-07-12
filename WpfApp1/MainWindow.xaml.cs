@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using Engine.ViewModels;
+using Engine.Models;
 using Engine.EventArgs;
 using WpfApp1;
 using System.Runtime.InteropServices;
@@ -64,6 +65,11 @@ namespace WPFUI
             _gameSession.CurrentPlayer.UseCurrentConsumable();
         }
 
+        private void OnClick_Craft(object sender, RoutedEventArgs e)
+        {
+            Recipe recipe = ((FrameworkElement)sender).DataContext as Recipe;
+            _gameSession.CraftItemUsing(recipe);
+        }
         private void OnClick_DisplayTradeScreen(object sender, RoutedEventArgs e)
         {
             TradeScreen tradeScreen = new TradeScreen();
