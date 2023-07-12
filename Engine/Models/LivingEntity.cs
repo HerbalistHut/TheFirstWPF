@@ -15,6 +15,7 @@ namespace Engine.Models
         private int _gold;
         private int _level;
         private GameItem _currentWeapon;
+        private GameItem _currentConsumable;
         public string Name
         {
             get => _name;
@@ -65,16 +66,36 @@ namespace Engine.Models
             get => _currentWeapon;
             set
             {
-                if(_currentWeapon != null)
+                if (_currentWeapon != null)
                 {
                     _currentWeapon.Action.OnActionPerformed -= RaisedOnActionPerformedEvent;
                 }
 
                 _currentWeapon = value;
-                
+
                 if (_currentWeapon != null)
                 {
                     _currentWeapon.Action.OnActionPerformed += RaisedOnActionPerformedEvent;
+                }
+
+                OnPropertyChanged();
+            }
+        }
+        public GameItem CurrentConsumable
+        {
+            get => _currentConsumable;
+            set
+            {
+                if (_currentConsumable != null)
+                {
+                    _currentConsumable.Action.OnActionPerformed -= OnActionPerformed;
+                }
+                
+                _currentConsumable = value;
+                
+                if (_currentConsumable != null)
+                {
+                    _currentConsumable.Action.OnActionPerformed += OnActionPerformed;
                 }
 
                 OnPropertyChanged();
@@ -85,11 +106,17 @@ namespace Engine.Models
         // На данный момент надо сделать ещё несколько вещей, прежде чем убирать свойство Inventory, поэтому сейчас тут существует кое-какое дублирование кода
         public ObservableCollection<GameItem> Inventory { get; }
         public ObservableCollection<GroupedInventoryItem> GroupedInventory { get; }
+        
         public List<GameItem> Weapons =>
             Inventory.Where(i => i.Category == GameItem.ItemCategory.Weapon).ToList();
+        
+        public List<GameItem> Consumables =>
+            Inventory.Where(i => i.Category == GameItem.ItemCategory.Consumable).ToList();
+        
+        public bool HasConsumable => Consumables.Any();
 
         public event EventHandler OnKilled;
-        public event EventHandler<string> OnActionPerformed; 
+        public event EventHandler<string> OnActionPerformed;
         protected LivingEntity(string name, int currentHitPoints, int maximumHitPoints, int gold, int level = 1)
         {
             Name = name;
@@ -107,7 +134,15 @@ namespace Engine.Models
             CurrentWeapon.PerformAction(this, target);
         }
 
-        public void TakeDamege (int hitPointsOfDamage)
+        public void UseCurrentConsumable()
+        {
+            if(CurrentConsumable != null)
+            {
+                CurrentConsumable.PerformAction(this, this);
+                RemoveItemFromInventory(CurrentConsumable);
+            }
+        }
+        public void TakeDamege(int hitPointsOfDamage)
         {
             CurrentHitPoints -= hitPointsOfDamage;
             if (CurrentHitPoints <= 0)
@@ -117,12 +152,12 @@ namespace Engine.Models
             }
         }
 
-        public void Heal (int hitPointsToHeal)
+        public void Heal(int hitPointsToHeal)
         {
             CurrentHitPoints += hitPointsToHeal;
             if (CurrentHitPoints > MaximumHitPoints)
             {
-                CurrentHitPoints = MaximumHitPoints; 
+                CurrentHitPoints = MaximumHitPoints;
             }
         }
 
@@ -148,7 +183,7 @@ namespace Engine.Models
         //OPC вызывается только для Weapons, так как Inventory и так сам обновляет свой UI при изменение в своей коллексии из-за ObservableCollection
         public void AddItemToInventory(GameItem item)
         {
-            if(item == null)
+            if (item == null)
             {
                 throw new ArgumentNullException(nameof(item));
             }
@@ -163,7 +198,7 @@ namespace Engine.Models
             {
                 // Если предмета не было в инвентаре до этого момента,то в сгруппированный инвентарь сначало добавляется предмет в количестве 0 штук,
                 // это сделанлано потому, что прибавление количества(Quantity) предмета выполнится в любом случае
-                if (!GroupedInventory.Any(gi=>gi.Item.Id == item.Id))
+                if (!GroupedInventory.Any(gi => gi.Item.Id == item.Id))
                 {
                     GroupedInventory.Add(new GroupedInventoryItem(item, 0));
                 }
@@ -171,6 +206,8 @@ namespace Engine.Models
             }
 
             OnPropertyChanged(nameof(Weapons));
+            OnPropertyChanged(nameof(Consumables));
+            OnPropertyChanged(nameof(HasConsumable));
         }
 
         public void RemoveItemFromInventory(GameItem item)
@@ -180,9 +217,9 @@ namespace Engine.Models
                 throw new ArgumentNullException(nameof(item));
             }
 
-            if (Inventory.FirstOrDefault(i=>i.Id == item.Id) == null)
+            if (Inventory.FirstOrDefault(i => i.Id == item.Id) == null)
             {
-                throw new ArgumentException(nameof(item),"This item doesn't exist in Inventory");
+                throw new ArgumentException(nameof(item), "This item doesn't exist in Inventory");
             }
 
             Inventory.Remove(item);
@@ -204,6 +241,9 @@ namespace Engine.Models
             {
                 groupedInventoryItem.Quantity--;
             }
+            OnPropertyChanged(nameof(Weapons));
+            OnPropertyChanged(nameof(Consumables));
+            OnPropertyChanged(nameof(HasConsumable));
         }
 
         private void RaisedOnKillEvent()

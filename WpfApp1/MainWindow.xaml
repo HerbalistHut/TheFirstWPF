@@ -13,7 +13,7 @@
     <Window.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibility"/>
     </Window.Resources>
-    
+
     <Grid>
 
         <Grid.RowDefinitions>
@@ -26,7 +26,7 @@
             <ColumnDefinition Width="250"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        
+
         <!--Menu-->
         <Label Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Content="Menu" Background="Aquamarine"/>
         <!--Player Stats-->
@@ -39,7 +39,7 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
-            
+
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
@@ -71,10 +71,11 @@
             </Grid.ColumnDefinitions>
             <!--Game messages-->
             <Border Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" BorderBrush="Gainsboro" BorderThickness="1">
-                
+
                 <RichTextBox x:Name="GameMessages" 
                              Background="Beige" 
-                             VerticalScrollBarVisibility="Auto">  <!--x:Name = "..." - когда код будет получать эвент,
+                             VerticalScrollBarVisibility="Auto">
+                    <!--x:Name = "..." - когда код будет получать эвент,
                                                                     он будет форматировать его и вставлять в RichTextBox используя это имя-->
                     <RichTextBox.Resources>
                         <Style TargetType="{x:Type Paragraph}">
@@ -82,7 +83,7 @@
                         </Style>
                     </RichTextBox.Resources>
                 </RichTextBox>
-                
+
             </Border>
             <!--Location info-->
             <Border Grid.Row="0" Grid.Column="1" BorderBrush="Black" BorderThickness="2">
@@ -109,7 +110,7 @@
                     <TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="{Binding CurrentMonster.Name}"/>
                     <Image Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding CurrentMonster.ImageName}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                     <StackPanel Grid.Row="2" Visibility="{Binding HasMonster, Converter={StaticResource BooleanToVisibility}}" Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock>Current Hit Points: </TextBlock>
+                        <TextBlock>Current Hit Points:</TextBlock>
                         <TextBlock Text="{Binding CurrentMonster.CurrentHitPoints}" VerticalAlignment="Center"/>
                     </StackPanel>
                 </Grid>
@@ -133,7 +134,7 @@
                                                 Binding="{Binding Item.Price}"
                                                 Width="Auto"/>
                         </DataGrid.Columns>
-                        
+
                     </DataGrid>
                 </TabItem>
 
@@ -150,7 +151,7 @@
                                                 Width="Auto"/>
                         </DataGrid.Columns>
                     </DataGrid>
-                    
+
                 </TabItem>
             </TabControl>
         </Grid>
@@ -165,13 +166,12 @@
             </Grid.ColumnDefinitions>
             <!-- Combat Controls-->
             <Grid Grid.Row="0" Grid.Column="0" 
-                  Visibility="{Binding HasMonster, Converter={StaticResource BooleanToVisibility}}"  
                   HorizontalAlignment="Center" VerticalAlignment="Center">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
-                
+
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="150"/>
                     <ColumnDefinition Width="10"/>
@@ -180,15 +180,31 @@
 
                 <ComboBox Grid.Row="0" Grid.Column="0"
                           ItemsSource="{Binding CurrentPlayer.Weapons}"
+                          Visibility="{Binding HasMonster, Converter={StaticResource BooleanToVisibility}}"  
                           SelectedItem="{Binding CurrentPlayer.CurrentWeapon}"
                           DisplayMemberPath="Name"
                           SelectedValuePath="ID"/>
+
                 <Button Grid.Row="0" Grid.Column="2"
+                        Visibility="{Binding HasMonster, Converter={StaticResource BooleanToVisibility}}"  
                         Content="Use"
                         Click="OnClick_AttackMonster"/>
-            </Grid>           
-            
-            <!-- Movement Controls -->            
+
+                <ComboBox Grid.Row="1" Grid.Column="0"
+                          Visibility="{Binding CurrentPlayer.HasConsumable, Converter={StaticResource BooleanToVisibility}}"
+                          ItemsSource="{Binding CurrentPlayer.Consumables}"
+                          SelectedItem="{Binding CurrentPlayer.CurrentConsumable}"
+                          DisplayMemberPath="Name"
+                          SelectedValuePath="ID"/>
+
+                <Button Grid.Row="1" Grid.Column="2"
+                        Content="Use"
+                        Visibility="{Binding CurrentPlayer.HasConsumable, Converter={StaticResource BooleanToVisibility}}"
+                        Click="OnClick_UseCurrentConsumable"/>
+            </Grid>
+
+
+            <!-- Movement Controls -->
             <Grid Grid.Row="0" Grid.Column="1">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
