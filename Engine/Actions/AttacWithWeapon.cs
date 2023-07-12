@@ -7,19 +7,17 @@ using System.Threading.Tasks;
 
 namespace Engine.Actions
 {
-    public class AttacWithWeapon : IAction
+    public class AttacWithWeapon : BaseAction, IAction
     {
-        private readonly GameItem _weapon;
         private readonly int _minimumDamage;
         private readonly int _maximumDamage;
 
-        public event EventHandler<string> OnActionPerformed;
-
-        public AttacWithWeapon(GameItem weapon, int minimumDamage, int maximumDamage)
+        public AttacWithWeapon(GameItem itemInUse, int minimumDamage, int maximumDamage)
+            :base(itemInUse)
         {
-            if (weapon.Category != GameItem.ItemCategory.Weapon)
+            if (itemInUse.Category != GameItem.ItemCategory.Weapon)
             {
-                throw new ArgumentException($"{weapon.Name} is not a weapon");
+                throw new ArgumentException($"{itemInUse.Name} is not a weapon");
             }
 
             if (_minimumDamage < 0)
@@ -32,7 +30,6 @@ namespace Engine.Actions
                 throw new ArgumentException("Maxumum damage is less than minimum damage");
             }
 
-            _weapon = weapon;
             _minimumDamage = minimumDamage;
             _maximumDamage = maximumDamage;
         }
@@ -51,10 +48,6 @@ namespace Engine.Actions
                 ReportResult($"{actorName} dealt {damage} damage to {targetName}.");
                 target.TakeDamege(damage);
             }
-        }
-        private void ReportResult(string result)
-        {
-            OnActionPerformed?.Invoke(this, result);
         }
     }
 }
