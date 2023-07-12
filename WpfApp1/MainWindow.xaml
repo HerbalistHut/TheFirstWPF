@@ -116,7 +116,7 @@
                 </Grid>
             </Border>
         </Grid>
-        <!--Inventory/Quests-->
+        <!--Inventory/Quests/Recipes-->
         <Grid Grid.Row="2" Grid.Column="0" Background="Aqua">
             <TabControl>
                 <TabItem Header="Inventory">
@@ -152,6 +152,19 @@
                         </DataGrid.Columns>
                     </DataGrid>
 
+                </TabItem>
+
+                <TabItem Header="Recipes">
+                    <DataGrid ItemsSource="{Binding CurrentPlayer.Recipes}"
+                              AutoGenerateColumns="False"
+                              HeadersVisibility="Column">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name"
+                                                    Binding="{Binding Name}"
+                                                    Width="*">
+                            </DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
                 </TabItem>
             </TabControl>
         </Grid>
