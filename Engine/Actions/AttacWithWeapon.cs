@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Engine.Actions
 {
-    public class AttacWithWeapon
+    public class AttacWithWeapon : IAction
     {
         private readonly GameItem _weapon;
         private readonly int _minimumDamage;
@@ -39,13 +39,16 @@ namespace Engine.Actions
         public void Execute(LivingEntity actor, LivingEntity target)
         {
             int damage = RandomNumberGenerator.NumberBetween(_minimumDamage, _maximumDamage);
+
+            string actorName = (actor is Player) ? "You" : $"The {actor.Name}";
+            string targetName = (target is Player) ? "you" : $"the {target.Name}";
             if (damage == 0)
             {
-                ReportResult($"You missed hit to a {target.Name}.");
+                ReportResult($"{actorName} missed hit to {targetName}.");
             }
             else
             {
-                ReportResult($"You dealt {damage} to the {target.Name}.");
+                ReportResult($"{actorName} dealt {damage} damage to {targetName}.");
                 target.TakeDamege(damage);
             }
         }

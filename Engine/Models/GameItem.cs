@@ -19,9 +19,9 @@ namespace Engine.Models
         public string Name { get; }
         public int Price { get; }
         public bool IsUnique { get; }
-        public AttacWithWeapon Action { get; set; }
+        public IAction Action { get; set; }
 
-        public GameItem(ItemCategory category,int id, string name, int price, bool isUnique = false, AttacWithWeapon action = null) 
+        public GameItem(ItemCategory category,int id, string name, int price, bool isUnique = false, IAction action = null) 
         {
             Category = category;
             Id = id;
