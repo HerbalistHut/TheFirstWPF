@@ -8,6 +8,7 @@ using Engine.Models;
 using Engine.EventArgs;
 using WpfApp1;
 using System.Runtime.InteropServices;
+using System.Windows.Controls;
 
 namespace WPFUI
 {
@@ -17,7 +18,7 @@ namespace WPFUI
     public partial class MainWindow : Window
     {
         private readonly GameSession _gameSession = new GameSession();
-        private readonly Dictionary<Key, Action> _userInputActions = 
+        private readonly Dictionary<Key, Action> _userInputActions =
             new Dictionary<Key, Action>();
         public MainWindow()
         {
@@ -34,17 +35,17 @@ namespace WPFUI
             _gameSession.MoveNorth();
         }
 
-        private void OnClick_MoveWest(object sender, RoutedEventArgs e) 
+        private void OnClick_MoveWest(object sender, RoutedEventArgs e)
         {
             _gameSession.MoveWest();
         }
 
-        private void OnClick_MoveEast(object sender, RoutedEventArgs e) 
+        private void OnClick_MoveEast(object sender, RoutedEventArgs e)
         {
             _gameSession.MoveEast();
         }
-        
-        private void OnClick_MoveSouth(object sender, RoutedEventArgs e) 
+
+        private void OnClick_MoveSouth(object sender, RoutedEventArgs e)
         {
             _gameSession.MoveSouth();
         }
@@ -73,6 +74,25 @@ namespace WPFUI
             _userInputActions.Add(Key.D, () => _gameSession.MoveEast());
             _userInputActions.Add(Key.E, () => _gameSession.AttackCurrentMonster());
             _userInputActions.Add(Key.H, () => _gameSession.CurrentPlayer.UseCurrentConsumable());
+            _userInputActions.Add(Key.D1, () => SetTabnFocusTo("InventoryTabItem"));
+            _userInputActions.Add(Key.D2, () => SetTabnFocusTo("QuestTabItem"));
+            _userInputActions.Add(Key.D3, () => SetTabnFocusTo("RecipesTabItem"));
+            _userInputActions.Add(Key.T, () => OnClick_DisplayTradeScreen(this, new RoutedEventArgs()));
+        }
+
+        private void SetTabnFocusTo(string tabName)
+        {
+            foreach (object item in PlayerDataTabControl.Items)
+            {
+                if (item is TabItem tabItem)
+                {
+                    if (tabItem.Name == tabName)
+                    {
+                        tabItem.IsSelected = true;
+                        return;
+                    }
+                }
+            }
         }
 
         private void MainWindow_OnKeyDown(object sender, KeyEventArgs e)
@@ -84,14 +104,17 @@ namespace WPFUI
         }
         private void OnClick_DisplayTradeScreen(object sender, RoutedEventArgs e)
         {
-            TradeScreen tradeScreen = new TradeScreen();
+            if (_gameSession.CurrentTrader != null)
+            {
+                TradeScreen tradeScreen = new TradeScreen();
 
-            // Конкретно тут это используется для того, чтобы отцентрова TradeScreen относительно главного окна
-            tradeScreen.Owner = this;
-            tradeScreen.DataContext = _gameSession;
+                // Конкретно тут это используется для того, чтобы отцентрова TradeScreen относительно главного окна
+                tradeScreen.Owner = this;
+                tradeScreen.DataContext = _gameSession;
 
-            // Используется ShowDialog(), а не Show() для того, чтобы пользователь не мог взаимодействовать с MainWindow, пока TradeScreen не будет закрыт 
-            tradeScreen.ShowDialog();
+                // Используется ShowDialog(), а не Show() для того, чтобы пользователь не мог взаимодействовать с MainWindow, пока TradeScreen не будет закрыт 
+                tradeScreen.ShowDialog();
+            }
         }
 
         // Таким образом мы общаемся между ViewModel и View
@@ -101,7 +124,7 @@ namespace WPFUI
             GameMessages.Document.Blocks.Add(new Paragraph(new Run(e.Message)));
             GameMessages.ScrollToEnd();
         }
-        
+
         private void OnClick_KillMonster(object sender, RoutedEventArgs e)
         {
             _gameSession.CurrentMonster.TakeDamege(9999);
