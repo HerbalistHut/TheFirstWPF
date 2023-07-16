@@ -206,7 +206,7 @@
                           Visibility="{Binding HasMonster, Converter={StaticResource BooleanToVisibility}}"  
                           SelectedItem="{Binding CurrentPlayer.CurrentWeapon}"
                           DisplayMemberPath="Name"
-                          SelectedValuePath="ID"/>
+                          SelectedValuePath="Id"/>
 
                 <Button Grid.Row="0" Grid.Column="2"
                         Visibility="{Binding HasMonster, Converter={StaticResource BooleanToVisibility}}"  

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Engine.Actions;
+using Engine.Shared;
 
 namespace Engine.Factories
 {
@@ -45,21 +46,21 @@ namespace Engine.Factories
 
                 GameItem gameItem = new GameItem(
                     category,
-                    GetXmlAttributeAsInt(node, "ID"),
-                    GetXmlAttribute(node, "Name"),
-                    GetXmlAttributeAsInt(node, "Price"),
+                    node.AttributeAsInt("ID"),
+                    node.AttributeAsString("Name"),
+                    node.AttributeAsInt("Price"),
                     category == GameItem.ItemCategory.Weapon);
 
                 switch (category)
                 {
                     case GameItem.ItemCategory.Weapon:
                         gameItem.Action = new AttacWithWeapon(gameItem,
-                                                              GetXmlAttributeAsInt(node, "MinimumDamage"),
-                                                              GetXmlAttributeAsInt(node, "MaximumDamage"));
+                                                              node.AttributeAsInt("MinimumDamage"),
+                                                              node.AttributeAsInt("MaximumDamage"));
                         break;
                     case GameItem.ItemCategory.Consumable:
                         gameItem.Action = new Heal(gameItem,
-                                                   GetXmlAttributeAsInt(node, "HitPointsToHeal"));
+                                                   node.AttributeAsInt("HitPointsToHeal"));
                         break;
                     case GameItem.ItemCategory.Miscellaneous:
                         break;
@@ -88,26 +89,13 @@ namespace Engine.Factories
                     return GameItem.ItemCategory.Weapon;
                 case "HealingItem":
                     return GameItem.ItemCategory.Consumable;
-                default:
+                case "MiscellaneousItem":
                     return GameItem.ItemCategory.Miscellaneous;
+                default:
+                    throw new ArgumentException($"{itemCategory} does not implemented in ItemFactory or does not exist.");
             }
         }
 
-        private static int GetXmlAttributeAsInt(XmlNode node, string attributeName)
-        {
-            return Convert.ToInt32(GetXmlAttribute(node, attributeName));
-        }
 
-        private static string GetXmlAttribute(XmlNode node, string attributeName)
-        {
-            XmlAttribute attribute = node.Attributes?[attributeName];
-
-            if (attribute == null)
-            {
-                throw new Exception($"Attrebute {attributeName} doesn't exist");
-            }
-
-            return attribute.Value;
-        }
     }
 }
