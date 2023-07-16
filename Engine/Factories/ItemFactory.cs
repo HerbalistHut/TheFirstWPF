@@ -22,9 +22,9 @@ namespace Engine.Factories
                 XmlDocument data = new XmlDocument();
                 data.LoadXml(File.ReadAllText(GAME_DATA_FILENAME));
 
-                LoadItemsFromNodes(data.SelectNodes("/gameItems/Weapons/Weapon"));
-                LoadItemsFromNodes(data.SelectNodes("/gameItems/HealingItems/HealingItem"));
-                LoadItemsFromNodes(data.SelectNodes("/gameItems/MiscellaneousItems/MiscellaneousItem"));
+                LoadItemsFromNodes(data.SelectNodes("/GameItems/Weapons/Weapon"));
+                LoadItemsFromNodes(data.SelectNodes("/GameItems/HealingItems/HealingItem"));
+                LoadItemsFromNodes(data.SelectNodes("/GameItems/MiscellaneousItems/MiscellaneousItem"));
             }
             else
             {
@@ -53,8 +53,8 @@ namespace Engine.Factories
                 switch (category)
                 {
                     case GameItem.ItemCategory.Weapon:
-                        gameItem.Action = new AttacWithWeapon(gameItem, 
-                                                              GetXmlAttributeAsInt(node, "MinimumDamage"), 
+                        gameItem.Action = new AttacWithWeapon(gameItem,
+                                                              GetXmlAttributeAsInt(node, "MinimumDamage"),
                                                               GetXmlAttributeAsInt(node, "MaximumDamage"));
                         break;
                     case GameItem.ItemCategory.Consumable:
@@ -86,7 +86,7 @@ namespace Engine.Factories
             {
                 case "Weapon":
                     return GameItem.ItemCategory.Weapon;
-                case "Consumable":
+                case "HealingItem":
                     return GameItem.ItemCategory.Consumable;
                 default:
                     return GameItem.ItemCategory.Miscellaneous;
