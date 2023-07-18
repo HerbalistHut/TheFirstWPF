@@ -17,7 +17,7 @@ namespace TestEngine.VIewModels
             GameSession gameSession = new GameSession();
 
             Assert.IsNotNull(gameSession.CurrentPlayer);
-            Assert.AreEqual("Town square", gameSession.CurrentLocation.Name);
+            Assert.AreEqual("Town Square", gameSession.CurrentLocation.Name);
         }
         [TestMethod]
         public void TestPlayerMovesHomeAndCompletelyHealedOnKilled() 
@@ -48,7 +48,7 @@ namespace TestEngine.VIewModels
             gameSession.MoveSouth();
 
             Assert.IsTrue(gameSession.CurrentPlayer.Quests.Any(q => q.IsCompleted && q.PlayerQuest.Id == 1));
-            Assert.IsTrue(gameSession.CurrentPlayer.Weapons.Any(w => w.Name == "Rusty Sword"));
+            Assert.IsTrue(gameSession.CurrentPlayer.Weapons.Any(w => w.Name == "Rusty sword"));
         }
     }
 }

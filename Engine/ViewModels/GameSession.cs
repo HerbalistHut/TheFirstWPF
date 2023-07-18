@@ -217,7 +217,7 @@ namespace Engine.ViewModels
                         {
                             GameItem reward = ItemFactory.CreateGameItem(i.Id);
                             RaiseMessage($"You receive {reward.Name}");
-                            CurrentPlayer.Inventory.Add(reward);
+                            CurrentPlayer.AddItemToInventory(reward);
                         }
 
                         questToComplete.IsCompleted = true;
