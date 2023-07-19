@@ -43,7 +43,7 @@ namespace Engine.Factories
                                               node.AttributeAsInt("RewardXP"),
                                               node.AttributeAsInt("Gold"));
 
-                XmlNodeList lootItemNodes = node.SelectNodes("./LootItems/LootItem");
+                XmlNodeList lootItemNodes = node.SelectNodes("LootItems/LootItem");
                 
                 foreach (XmlNode node2 in lootItemNodes)
                 {

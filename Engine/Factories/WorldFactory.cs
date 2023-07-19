@@ -47,11 +47,11 @@ namespace Engine.Factories
                 Location location = new Location(node.AttributeAsInt("X"),
                                                  node.AttributeAsInt("Y"),
                                                  node.AttributeAsString("Name"),
-                                                 node.SelectSingleNode("./Description")?.InnerText ?? "",
+                                                 node.SelectSingleNode("Description")?.InnerText ?? "",
                                                  $"{rootImagePath}{node.AttributeAsString("ImageName")}");
-                AddMonster(location, node.SelectNodes("./Monsters/Monster"));
-                AddQuest(location, node.SelectNodes("./Quests/Quest"));
-                AddTrader(location, node.SelectSingleNode("./Trader"));
+                AddMonster(location, node.SelectNodes("Monsters/Monster"));
+                AddQuest(location, node.SelectNodes("Quests/Quest"));
+                AddTrader(location, node.SelectSingleNode("Trader"));
 
                 world.AddLocation(location);
             }
@@ -91,7 +91,7 @@ namespace Engine.Factories
                 return;
             }
 
-            location.TraderHere = TraderFactory.GetTraderByName(traderNode.AttributeAsString("Name"));
+            location.TraderHere = TraderFactory.GetTraderByID(traderNode.AttributeAsInt("ID"));
         }
     }
 }
