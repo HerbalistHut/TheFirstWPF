@@ -1,61 +1,63 @@
 ﻿using Engine.Models;
 using System;
+using System.IO;
+using System.Xml;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Engine.Actions;
+using Engine.Shared;
 
 namespace Engine.Factories
 {
     static public class MonsterFactory
     {
-        public static Monster GetMonster(int id)
+        private const string GAME_DATA_FILENAME = ".\\GameData\\Monsters.xml";
+        private static readonly List<Monster> _baseMonsters = new List<Monster>();
+
+        static MonsterFactory()
         {
-            switch(id)
+            if (!File.Exists(GAME_DATA_FILENAME))
             {
-                case 1:
-                    Monster snake = new Monster("Snake", "Snake.png", 4, 4, 4, 1);
-                    
-                    snake.CurrentWeapon = ItemFactory.CreateGameItem(1501);
+                 throw new FileNotFoundException($"Missing file : {GAME_DATA_FILENAME}");
+            }
 
-                    AddLootItem(snake, 9001, 25);
-                    AddLootItem(snake, 9002, 75);
+            XmlDocument data = new XmlDocument();
+            data.LoadXml(File.ReadAllText(GAME_DATA_FILENAME));
 
-                    return snake;
+            string rootImagePath = data.SelectSingleNode("/Monsters").AttributeAsString("RootImagePath");
 
-                case 2:
-                    Monster rat = new Monster("Rat", "Rat.png", 5, 5, 5, 1);
+            LoadMonstersFromNodes(data.SelectNodes("/Monsters/Monster"), rootImagePath);
+        }
 
-                    rat.CurrentWeapon = ItemFactory.CreateGameItem(1502);
+        private static void LoadMonstersFromNodes(XmlNodeList nodes, string rootImagePath)
+        {
+            foreach (XmlNode node in nodes)
+            {
+                Monster monster = new Monster(node.AttributeAsInt("ID"),
+                                              node.AttributeAsString("Name"),
+                                              $"{rootImagePath}{node.AttributeAsString("ImageName")}",
+                                              node.AttributeAsInt("MaximumHitPoints"),
+                                              ItemFactory.CreateGameItem(node.AttributeAsInt("WeaponID")),
+                                              node.AttributeAsInt("RewardXP"),
+                                              node.AttributeAsInt("Gold"));
 
-                    AddLootItem(rat, 9003, 25);
-                    AddLootItem(rat, 9004, 75);
+                XmlNodeList lootItemNodes = node.SelectNodes("./LootItems/LootItem");
+                
+                foreach (XmlNode node2 in lootItemNodes)
+                {
+                    monster.AddItemToLootTable(node2.AttributeAsInt("ID"),
+                                               node2.AttributeAsInt("Percentage"));
+                }
 
-                    return rat;
-
-                case 3:
-                    Monster giantSpider = new Monster("GiantSpider", "GiantSpider.png", 10, 10, 10, 3);
-
-                    giantSpider.CurrentWeapon = ItemFactory.CreateGameItem(1503);
-
-                    AddLootItem(giantSpider, 9005, 25);
-                    AddLootItem(giantSpider, 9006, 75);
-
-                    return giantSpider;
-
-
-                default:
-                    throw new ArgumentException(string.Format($"MonsterType {0} does not exist", id));
-
+                _baseMonsters.Add(monster);
             }
         }
 
-        private static void AddLootItem(Monster monster, int ItemID, int pr)
+        public static Monster GetMonster(int id)
         {
-            if (RandomNumberGenerator.NumberBetween(1, 100) <= pr)
-            {
-                monster.AddItemToInventory(ItemFactory.CreateGameItem(ItemID));
-            }
+            return _baseMonsters.FirstOrDefault(x => x.ID == id).GetNewMonster();
         }
     }
 }

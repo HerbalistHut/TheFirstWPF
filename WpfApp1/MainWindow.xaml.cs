@@ -127,8 +127,12 @@ namespace WPFUI
 
         private void OnClick_KillMonster(object sender, RoutedEventArgs e)
         {
-            _gameSession.CurrentMonster.TakeDamege(9999);
-            _gameSession.GetMonsterAtLocation();
+            for (int i = 0; i < 10; i++)
+            {
+                _gameSession.CurrentMonster.TakeDamege(9999);
+                _gameSession.GetMonsterAtLocation();
+                
+            }
         }
     }
 }

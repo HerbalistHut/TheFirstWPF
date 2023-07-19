@@ -18,32 +18,30 @@ namespace Engine.Factories
         static internal World CreateWorld()
         {
 
-            var newWorld = new World();
-
-            if (File.Exists(GAME_DATA_FILENAME))
-            {
-                XmlDocument data = new XmlDocument();
-                data.LoadXml(File.ReadAllText(GAME_DATA_FILENAME));
-
-                string rootImagePath = data.SelectSingleNode("/Locations").AttributeAsString("RootImagePath");
-
-                LoadLocations(newWorld, rootImagePath, data.SelectNodes("/Locations/Location"));
-            }
-            else
+            if (!File.Exists(GAME_DATA_FILENAME))
             {
                 throw new FileNotFoundException($"Missing file:{GAME_DATA_FILENAME}");
             }
 
+            var newWorld = new World();
+
+            XmlDocument data = new XmlDocument();
+            data.LoadXml(File.ReadAllText(GAME_DATA_FILENAME));
+
+            string rootImagePath = data.SelectSingleNode("/Locations").AttributeAsString("RootImagePath");
+
+            LoadLocations(newWorld, rootImagePath, data.SelectNodes("/Locations/Location"));
+
             return newWorld;
         }
 
-        private static void LoadLocations(World world, string  rootImagePath, XmlNodeList nodes)
+        private static void LoadLocations(World world, string rootImagePath, XmlNodeList nodes)
         {
             if (nodes == null)
             {
                 return;
             }
-        
+
             foreach (XmlNode node in nodes)
             {
                 Location location = new Location(node.AttributeAsInt("X"),
@@ -66,7 +64,7 @@ namespace Engine.Factories
                 return;
             }
 
-            foreach(XmlNode monsterNode in monstersNode)
+            foreach (XmlNode monsterNode in monstersNode)
             {
                 location.AddMonster(monsterNode.AttributeAsInt("ID"),
                                     monsterNode.AttributeAsInt("Percent"));

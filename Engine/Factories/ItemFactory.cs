@@ -18,19 +18,17 @@ namespace Engine.Factories
 
         static ItemFactory()
         {
-            if (File.Exists(GAME_DATA_FILENAME))
-            {
-                XmlDocument data = new XmlDocument();
-                data.LoadXml(File.ReadAllText(GAME_DATA_FILENAME));
-
-                LoadItemsFromNodes(data.SelectNodes("/GameItems/Weapons/Weapon"));
-                LoadItemsFromNodes(data.SelectNodes("/GameItems/HealingItems/HealingItem"));
-                LoadItemsFromNodes(data.SelectNodes("/GameItems/MiscellaneousItems/MiscellaneousItem"));
-            }
-            else
+            if (!File.Exists(GAME_DATA_FILENAME))
             {
                 throw new FileNotFoundException($"Missing file:{GAME_DATA_FILENAME}");
             }
+
+            XmlDocument data = new XmlDocument();
+            data.LoadXml(File.ReadAllText(GAME_DATA_FILENAME));
+
+            LoadItemsFromNodes(data.SelectNodes("/GameItems/Weapons/Weapon"));
+            LoadItemsFromNodes(data.SelectNodes("/GameItems/HealingItems/HealingItem"));
+            LoadItemsFromNodes(data.SelectNodes("/GameItems/MiscellaneousItems/MiscellaneousItem"));
         }
 
         static void LoadItemsFromNodes(XmlNodeList nodes)

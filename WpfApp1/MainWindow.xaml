@@ -109,7 +109,7 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
                     <TextBlock Grid.Row="0" HorizontalAlignment="Center" Text="{Binding CurrentMonster.Name}"/>
-                    <Image Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding CurrentMonster.ImageName}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                    <Image Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" Source="{Binding CurrentMonster.ImageName, Converter={StaticResource FileToBitmapConverter}}" RenderOptions.BitmapScalingMode="NearestNeighbor"/>
                     <StackPanel Grid.Row="2" Visibility="{Binding HasMonster, Converter={StaticResource BooleanToVisibility}}" Orientation="Horizontal" HorizontalAlignment="Center">
                         <TextBlock>Current Hit Points:</TextBlock>
                         <TextBlock Text="{Binding CurrentMonster.CurrentHitPoints}" VerticalAlignment="Center"/>
