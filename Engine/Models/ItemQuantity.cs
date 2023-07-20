@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Engine.Factories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,6 +11,9 @@ namespace Engine.Models
     {
         public int Id { get; }
         public int Quantity{ get; }
+
+        public string QuantityItemDescription => $"{Quantity} {ItemFactory.ItemName(Id)}";
+
         public ItemQuantity(int id, int quantity) 
         {
             Id = id;

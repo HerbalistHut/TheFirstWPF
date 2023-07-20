@@ -7,12 +7,12 @@ using System.Threading.Tasks;
 
 namespace Engine.Actions
 {
-    public class AttacWithWeapon : BaseAction, IAction
+    public class AttackWithWeapon : BaseAction, IAction
     {
         private readonly int _minimumDamage;
         private readonly int _maximumDamage;
 
-        public AttacWithWeapon(GameItem itemInUse, int minimumDamage, int maximumDamage)
+        public AttackWithWeapon(GameItem itemInUse, int minimumDamage, int maximumDamage)
             :base(itemInUse)
         {
             if (itemInUse.Category != GameItem.ItemCategory.Weapon)
@@ -20,14 +20,14 @@ namespace Engine.Actions
                 throw new ArgumentException($"{itemInUse.Name} is not a weapon");
             }
 
-            if (_minimumDamage < 0)
+            if (minimumDamage < 0)
             {
                 throw new ArgumentException($"Minimum damage is smaller than 0");
             }
 
-            if (_minimumDamage > _maximumDamage)
+            if (maximumDamage < minimumDamage)
             {
-                throw new ArgumentException("Maxumum damage is less than minimum damage");
+                throw new ArgumentException("Maximum damage is less than minimum damage");
             }
 
             _minimumDamage = minimumDamage;

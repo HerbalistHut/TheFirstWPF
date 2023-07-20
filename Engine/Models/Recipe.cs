@@ -13,10 +13,19 @@ namespace Engine.Models
         public List<ItemQuantity> Ingredients { get; } = new List<ItemQuantity>();
         public List<ItemQuantity> OutputItems { get; } = new List<ItemQuantity>();
 
+        public string ToolTipContents =>
+            "To craft this:" + Environment.NewLine +
+            "----------------------------------------------------" + Environment.NewLine +
+            string.Join(Environment.NewLine, OutputItems.Select(i => i.QuantityItemDescription)) +
+            Environment.NewLine + Environment.NewLine +
+            "You need:" + Environment.NewLine +
+            "----------------------------------------------------" + Environment.NewLine +
+            string.Join(Environment.NewLine, Ingredients.Select(i => i.QuantityItemDescription));
         public Recipe(int id, string name)
         {
             ID = id;
             Name = name;
+            name = OutputItems.Count() > 5 ? "asd" : "dsa";
         }
 
         public void AddIngredient (int id, int quantity)

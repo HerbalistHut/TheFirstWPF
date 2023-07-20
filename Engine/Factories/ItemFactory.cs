@@ -52,7 +52,7 @@ namespace Engine.Factories
                 switch (category)
                 {
                     case GameItem.ItemCategory.Weapon:
-                        gameItem.Action = new AttacWithWeapon(gameItem,
+                        gameItem.Action = new AttackWithWeapon(gameItem,
                                                               node.AttributeAsInt("MinimumDamage"),
                                                               node.AttributeAsInt("MaximumDamage"));
                         break;
