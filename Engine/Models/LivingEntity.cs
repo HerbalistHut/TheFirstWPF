@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Engine.Services;
 
 namespace Engine.Models
 {
@@ -16,6 +17,7 @@ namespace Engine.Models
         private int _level;
         private GameItem _currentWeapon;
         private GameItem _currentConsumable;
+        private Inventory _inventory;
         public string Name
         {
             get => _name;
@@ -104,16 +106,15 @@ namespace Engine.Models
         public bool IsDead => CurrentHitPoints <= 0;
 
         // На данный момент надо сделать ещё несколько вещей, прежде чем убирать свойство Inventory, поэтому сейчас тут существует кое-какое дублирование кода
-        public ObservableCollection<GameItem> Inventory { get; }
-        public ObservableCollection<GroupedInventoryItem> GroupedInventory { get; }
-        
-        public List<GameItem> Weapons =>
-            Inventory.Where(i => i.Category == GameItem.ItemCategory.Weapon).ToList();
-        
-        public List<GameItem> Consumables =>
-            Inventory.Where(i => i.Category == GameItem.ItemCategory.Consumable).ToList();
-        
-        public bool HasConsumable => Consumables.Any();
+        public Inventory Inventory 
+        {
+            get => _inventory;
+            set
+            {
+                _inventory = value;
+                OnPropertyChanged();
+            }
+        }
 
         public event EventHandler OnKilled;
         public event EventHandler<string> OnActionPerformed;
@@ -125,8 +126,7 @@ namespace Engine.Models
             Gold = gold;
             Level = level;
 
-            Inventory = new ObservableCollection<GameItem>();
-            GroupedInventory = new ObservableCollection<GroupedInventoryItem>();
+            Inventory = new Inventory();
         }
 
         public void UseCurrentWeaponOn(LivingEntity target)
@@ -182,89 +182,22 @@ namespace Engine.Models
 
         public void AddItemToInventory(GameItem item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
+            Inventory = Inventory.AddItem(item);
+        }
 
-            Inventory.Add(item);
-
-            if (item.IsUnique)
-            {
-                GroupedInventory.Add(new GroupedInventoryItem(item, 1));
-            }
-            else
-            {
-                // If the item was not in the inventory before this moment, then first of all the item is added to the GroupedInventory in the amount of 0
-                if (!GroupedInventory.Any(gi => gi.Item.Id == item.Id))
-                {
-                    GroupedInventory.Add(new GroupedInventoryItem(item, 0));
-                }
-                GroupedInventory.First(gi => gi.Item.Id == item.Id).Quantity++;
-            }
-
-            OnPropertyChanged(nameof(Weapons));
-            OnPropertyChanged(nameof(Consumables));
-            OnPropertyChanged(nameof(HasConsumable));
+        public void AddItemToInventory(int id)
+        {
+            Inventory = Inventory.AddItem(id);
         }
 
         public void RemoveItemFromInventory(GameItem item)
         {
-            if (item == null)
-            {
-                throw new ArgumentNullException(nameof(item));
-            }
-
-            if (Inventory.FirstOrDefault(i => i.Id == item.Id) == null)
-            {
-                throw new ArgumentException(nameof(item), "This item doesn't exist in Inventory");
-            }
-
-            Inventory.Remove(item);
-
-            GroupedInventoryItem groupedInventoryItem = item.IsUnique ?
-                GroupedInventory.FirstOrDefault(gi => gi.Item == item) :
-                GroupedInventory.FirstOrDefault(gi => gi.Item.Id == item.Id); // Several non-unique item must be removed by thair ID's, otherwise that won't work even if those                                                                    items are 100% identical (why? idk) 
-
-            if (groupedInventoryItem == null)
-            {
-                throw new ArgumentException($"{nameof(item)} doesn't exist in GroupedInventory");
-            }
-
-            if (groupedInventoryItem.Quantity == 1)
-            {
-                GroupedInventory.Remove(groupedInventoryItem);
-            }
-            else
-            {
-                groupedInventoryItem.Quantity--;
-            }
-            OnPropertyChanged(nameof(Weapons));
-            OnPropertyChanged(nameof(Consumables));
-            OnPropertyChanged(nameof(HasConsumable));
+            Inventory = Inventory.RemoveItem(item);
         }
 
         public void RemoveItemFromInventory(List<ItemQuantity> itemQuantities)
         {
-            foreach (var itemQuantity in itemQuantities)
-            {
-                for (int i = 0; i < itemQuantity.Quantity; i++)
-                {
-                    RemoveItemFromInventory(Inventory.FirstOrDefault(item => item.Id == itemQuantity.Id));
-                }
-            }
-        }
-
-        public bool HasAllTheseItems(List<ItemQuantity> items)
-        {
-            foreach (var item in items)
-            {
-                if (Inventory.Count(i => i.Id == item.Id) < item.Quantity)
-                {
-                    return false;
-                }
-            }
-            return true;
+            Inventory = Inventory.RemoveItem(itemQuantities);
         }
 
         private void RaisedOnKillEvent()

@@ -48,7 +48,7 @@ namespace TestEngine.VIewModels
             gameSession.MoveSouth();
 
             Assert.IsTrue(gameSession.CurrentPlayer.Quests.Any(q => q.IsCompleted && q.PlayerQuest.Id == 1));
-            Assert.IsTrue(gameSession.CurrentPlayer.Weapons.Any(w => w.Name == "Rusty sword"));
+            Assert.IsTrue(gameSession.CurrentPlayer.Inventory.Weapons.Any(w => w.Name == "Rusty sword"));
         }
     }
 }

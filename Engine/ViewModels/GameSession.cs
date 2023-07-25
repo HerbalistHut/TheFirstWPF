@@ -99,7 +99,7 @@ namespace Engine.ViewModels
         {
             CurrentPlayer = new Player("Nikitka", 10, 10, 1, 95);
             
-            if (!CurrentPlayer.Weapons.Any())
+            if (!CurrentPlayer.Inventory.Weapons.Any())
             {
                 CurrentPlayer.AddItemToInventory(ItemFactory.CreateGameItem(1001));
             }
@@ -200,7 +200,7 @@ namespace Engine.ViewModels
 
                 if (questToComplete != null)
                 {
-                    if (CurrentPlayer.HasAllTheseItems(quest.ItemsToComplete))
+                    if (CurrentPlayer.Inventory.HasAllTheseItems(quest.ItemsToComplete))
                     {
                         CurrentPlayer.RemoveItemFromInventory(quest.ItemsToComplete);
 
@@ -261,7 +261,7 @@ namespace Engine.ViewModels
 
         public void CraftItemUsing(Recipe recipe)
         {
-            if (CurrentPlayer.HasAllTheseItems(recipe.Ingredients))
+            if (CurrentPlayer.Inventory.HasAllTheseItems(recipe.Ingredients))
             {
                 CurrentPlayer.RemoveItemFromInventory(recipe.Ingredients);
 
@@ -310,7 +310,7 @@ namespace Engine.ViewModels
             CurrentPlayer.ReceiveGold(CurrentMonster.Gold);
             RaiseMessage($"You receive {CurrentMonster.Gold} gold");
 
-            foreach (GameItem gameItem in CurrentMonster.Inventory)
+            foreach (GameItem gameItem in CurrentMonster.Inventory.Items)
             {
                 CurrentPlayer.AddItemToInventory(gameItem);
                 RaiseMessage($"You receive one {gameItem.Name}");
