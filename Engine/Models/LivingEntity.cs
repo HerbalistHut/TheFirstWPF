@@ -103,7 +103,8 @@ namespace Engine.Models
                 OnPropertyChanged();
             }
         }
-        public bool IsDead => CurrentHitPoints <= 0;
+        public bool IsAlive => CurrentHitPoints > 0;
+        public bool IsDead => !IsAlive;
 
         // На данный момент надо сделать ещё несколько вещей, прежде чем убирать свойство Inventory, поэтому сейчас тут существует кое-какое дублирование кода
         public Inventory Inventory 

@@ -132,8 +132,8 @@ namespace WPFUI
             for (int i = 0; i < 10; i++)
             {
                 _gameSession.CurrentMonster.TakeDamege(9999);
-                _gameSession.GetMonsterAtLocation();
-                
+                _gameSession.CurrentMonster = _gameSession.CurrentLocation.GetMonster();
+                _gameSession.CurrentPlayer.CompletelyHeal();
             }
         }
     }
