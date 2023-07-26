@@ -9,6 +9,7 @@ using Engine.EventArgs;
 using WpfApp1;
 using System.Runtime.InteropServices;
 using System.Windows.Controls;
+using Engine.Services;
 
 namespace WPFUI
 {
@@ -17,6 +18,7 @@ namespace WPFUI
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly MessageBroker _messageBroker = MessageBroker.GetInstance();
         private readonly GameSession _gameSession = new GameSession();
         private readonly Dictionary<Key, Action> _userInputActions =
             new Dictionary<Key, Action>();
@@ -27,7 +29,7 @@ namespace WPFUI
             InitializeUserInputActions();
 
             DataContext = _gameSession;
-            _gameSession.OnMessageRaised += OnGameMessageRaised;
+            _messageBroker.OnMessageRaised += OnGameMessageRaised;
         }
 
         private void OnClick_MoveNorth(object sender, RoutedEventArgs e)
