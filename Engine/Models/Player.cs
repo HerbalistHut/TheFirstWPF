@@ -37,8 +37,8 @@ namespace Engine.Models
         public ObservableCollection<QuestStatus> Quests { get; }
         public ObservableCollection<Recipe> Recipes { get; }
         public event EventHandler OnLeveledUp;
-        public Player(string name, int currentHitPoints, int maximumHitPoints, int gold, int experiencePoints) :
-            base(name, currentHitPoints, maximumHitPoints, gold)
+        public Player(string name, int currentHitPoints, int maximumHitPoints, int gold, int experiencePoints, int dexterity) :
+            base(name, currentHitPoints, maximumHitPoints, gold, dexterity)
         {
             ExperiencePoints = experiencePoints;
             Quests = new ObservableCollection<QuestStatus>();

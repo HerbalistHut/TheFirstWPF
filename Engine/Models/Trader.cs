@@ -10,7 +10,7 @@ namespace Engine.Models
     public class Trader : LivingEntity
     {
         public int ID { get; }
-        public Trader(int id, string name) : base(name, 99999, 99999, 999999) 
+        public Trader(int id, string name) : base(name, 99999, 99999, 999999,90766898) 
         {
             ID = id;
         } 

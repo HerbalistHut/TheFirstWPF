@@ -43,6 +43,7 @@ namespace TestEngine.VIewModels
             for (int i = 0; i < 100; i++) 
             {
                 gameSession.AttackCurrentMonster();
+                gameSession.CurrentPlayer.CompletelyHeal();
             }
 
             gameSession.MoveSouth();

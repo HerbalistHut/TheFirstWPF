@@ -96,7 +96,7 @@ namespace Engine.ViewModels
        
         public GameSession()
         {
-            CurrentPlayer = new Player("Nikitka", 10, 10, 1, 95);
+            CurrentPlayer = new Player("Nikitka", 10, 10, 1, 95, 9);
             
             if (!CurrentPlayer.Inventory.Weapons.Any())
             {

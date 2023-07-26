@@ -15,8 +15,8 @@ namespace Engine.Models
         public int ID { get; }
         public string ImageName { get; }
         public int RewardExperiencePoints { get; }
-        public Monster(int id, string name, string imageName, int maximumHitPoints, GameItem currentWeapon, int rewardExperiencePoints, int rewardGold) :
-            base(name, maximumHitPoints, maximumHitPoints, rewardGold)
+        public Monster(int id, string name, string imageName, int maximumHitPoints, GameItem currentWeapon, int rewardExperiencePoints, int rewardGold, int dexterity) :
+            base(name, maximumHitPoints, maximumHitPoints, rewardGold, dexterity)
         {
             ID = id;
             ImageName = imageName;
@@ -35,7 +35,7 @@ namespace Engine.Models
         public Monster GetNewMonster()
         {
             //Clone this monster
-            Monster newMonster = new Monster(ID, Name, ImageName, MaximumHitPoints, CurrentWeapon, RewardExperiencePoints, Gold);
+            Monster newMonster = new Monster(ID, Name, ImageName, MaximumHitPoints, CurrentWeapon, RewardExperiencePoints, Gold, Dexterity);
 
             foreach (ItemPercentage itemPercentage in _lootTable)
             {

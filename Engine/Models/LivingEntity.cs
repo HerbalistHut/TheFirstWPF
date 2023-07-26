@@ -15,6 +15,7 @@ namespace Engine.Models
         private int _maximumHitPoints;
         private int _gold;
         private int _level;
+        private int _dexterity;
         private GameItem _currentWeapon;
         private GameItem _currentConsumable;
         private Inventory _inventory;
@@ -60,6 +61,15 @@ namespace Engine.Models
             protected set
             {
                 _level = value;
+                OnPropertyChanged();
+            }
+        }
+        public int Dexterity
+        {
+            get => _dexterity;
+            private set
+            {
+                _dexterity = value;
                 OnPropertyChanged();
             }
         }
@@ -119,13 +129,14 @@ namespace Engine.Models
 
         public event EventHandler OnKilled;
         public event EventHandler<string> OnActionPerformed;
-        protected LivingEntity(string name, int currentHitPoints, int maximumHitPoints, int gold, int level = 1)
+        protected LivingEntity(string name, int currentHitPoints, int maximumHitPoints, int gold, int dexterity, int level = 1)
         {
             Name = name;
             CurrentHitPoints = currentHitPoints;
             MaximumHitPoints = maximumHitPoints;
             Gold = gold;
             Level = level;
+            Dexterity = dexterity;
 
             Inventory = new Inventory();
         }

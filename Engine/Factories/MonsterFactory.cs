@@ -41,7 +41,8 @@ namespace Engine.Factories
                                               node.AttributeAsInt("MaximumHitPoints"),
                                               ItemFactory.CreateGameItem(node.AttributeAsInt("WeaponID")),
                                               node.AttributeAsInt("RewardXP"),
-                                              node.AttributeAsInt("Gold"));
+                                              node.AttributeAsInt("Gold"),
+                                              Convert.ToInt32(node.SelectSingleNode("Dexterity").InnerText));
 
                 XmlNodeList lootItemNodes = node.SelectNodes("LootItems/LootItem");
                 

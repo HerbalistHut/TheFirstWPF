@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Engine.Services;
 
 namespace Engine.Actions
 {
@@ -35,16 +36,17 @@ namespace Engine.Actions
         }
         public void Execute(LivingEntity actor, LivingEntity target)
         {
-            int damage = RandomNumberGenerator.NumberBetween(_minimumDamage, _maximumDamage);
 
             string actorName = (actor is Player) ? "You" : $"The {actor.Name}";
             string targetName = (target is Player) ? "you" : $"the {target.Name}";
-            if (damage == 0)
+
+            if (!CombatService.AttackSucceeded(actor, target))
             {
                 ReportResult($"{actorName} missed hit to {targetName}.");
             }
             else
             {
+                int damage = RandomNumberGenerator.NumberBetween(_minimumDamage, _maximumDamage);
                 ReportResult($"{actorName} dealt {damage} damage to {targetName}.");
                 target.TakeDamege(damage);
             }
