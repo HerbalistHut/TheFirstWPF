@@ -16,6 +16,9 @@ namespace Engine.ViewModels
     {
         private readonly MessageBroker _messageBroker = MessageBroker.GetInstance();
 
+        public string Version { get; } = "0.1.000";
+
+
         private Monster _currentMonster;
         private Location _currentLocation;
         private Trader _currentTrader;
@@ -115,6 +118,13 @@ namespace Engine.ViewModels
 
             CurrentLocation = CurrentWorld.LocationAt(0, 0);
 
+        }
+
+        public GameSession(Player player, int xCoordinate, int yCoordinate)
+        {
+            CurrentWorld = WorldFactory.CreateWorld();
+            CurrentPlayer = player;
+            CurrentLocation = CurrentWorld.LocationAt(xCoordinate, yCoordinate);
         }
 
         public bool HasLocationToNorth 

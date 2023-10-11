@@ -39,6 +39,7 @@ namespace Engine.Models
             if (_player.CurrentWeapon == null)
             {
                 _messageBroker.RaiseMessage("You can't attack without weapon in your hands!");
+                return;
             }
 
             _player.UseCurrentWeaponOn(_opponent);

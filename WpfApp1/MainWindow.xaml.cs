@@ -19,7 +19,7 @@ namespace WPFUI
     public partial class MainWindow : Window
     {
         private readonly MessageBroker _messageBroker = MessageBroker.GetInstance();
-        private readonly GameSession _gameSession = new GameSession();
+        private readonly GameSession _gameSession;
         private readonly Dictionary<Key, Action> _userInputActions =
             new Dictionary<Key, Action>();
         public MainWindow()
@@ -28,7 +28,10 @@ namespace WPFUI
 
             InitializeUserInputActions();
 
+            _gameSession = SaveGameService.LoadLastSaveOrCreateNew();
+
             DataContext = _gameSession;
+
             _messageBroker.OnMessageRaised += OnGameMessageRaised;
         }
 
@@ -76,13 +79,13 @@ namespace WPFUI
             _userInputActions.Add(Key.D, () => _gameSession.MoveEast());
             _userInputActions.Add(Key.E, () => _gameSession.AttackCurrentMonster());
             _userInputActions.Add(Key.H, () => _gameSession.CurrentPlayer.UseCurrentConsumable());
-            _userInputActions.Add(Key.D1, () => SetTabnFocusTo("InventoryTabItem"));
-            _userInputActions.Add(Key.D2, () => SetTabnFocusTo("QuestTabItem"));
-            _userInputActions.Add(Key.D3, () => SetTabnFocusTo("RecipesTabItem"));
+            _userInputActions.Add(Key.D1, () => SetTabFocusTo("InventoryTabItem"));
+            _userInputActions.Add(Key.D2, () => SetTabFocusTo("QuestTabItem"));
+            _userInputActions.Add(Key.D3, () => SetTabFocusTo("RecipesTabItem"));
             _userInputActions.Add(Key.T, () => OnClick_DisplayTradeScreen(this, new RoutedEventArgs()));
         }
 
-        private void SetTabnFocusTo(string tabName)
+        private void SetTabFocusTo(string tabName)
         {
             foreach (object item in PlayerDataTabControl.Items)
             {
@@ -135,6 +138,11 @@ namespace WPFUI
                 _gameSession.CurrentMonster = _gameSession.CurrentLocation.GetMonster();
                 _gameSession.CurrentPlayer.CompletelyHeal();
             }
+        }
+
+        private void MainWindow_OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            SaveGameService.Save(_gameSession);
         }
     }
 }
